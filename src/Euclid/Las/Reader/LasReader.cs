@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Euclid.Las.Points;
 using Euclid.Las.Headers.Interfaces;
@@ -16,7 +12,6 @@ namespace Euclid.Las.Reader
         public bool EOF => _Stream.EOF;
         public ulong PointCount => Header.PointCount;
         public ILasHeader Header => _Stream.Header;
-
 
         private IStreamHandler _Stream;
 

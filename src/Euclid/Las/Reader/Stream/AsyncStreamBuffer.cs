@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Euclid.Las.Points;
 using Euclid.Las.Points.Interfaces;
 using Euclid.Las.Headers.Interfaces;
+using Euclid.Las.Reader.Stream.Interfaces;
 
 namespace Euclid.Las.Reader.Stream
 {
-    internal class AsyncStreamBuffer
+    internal class AsyncStreamBuffer : IStreamBuffer
     {
-        public readonly Array Data;
+        public Array Data { get; private set; }
 
         public int Loaded { get; private set; } = 0;
         public int Consumed { get; private set; } = 0;

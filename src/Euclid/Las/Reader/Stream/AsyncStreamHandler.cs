@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -23,31 +22,17 @@ namespace Euclid.Las.Reader.Stream
         public ulong PointsYielded { get; private set; } = 0;
         public ulong PointsReturned { get; private set; } = 0;
 
-        /// <summary>
-        /// The type of LasPoint to be read by the reader
-        /// </summary>
-        public Type PointType { get; }
-
-        /// <summary>
-        /// Flag indicating if we've read all the available point data
-        /// </summary>
-        public bool EOF => PointsReturned >= Header.PointCount;
-
-        /// <summary>
-        /// The total number of points to be kept in each in-memory PointBuffer
-        /// </summary>
-        public uint BufferCount { get; }
-        /// <summary>
-        /// The total number of bytes to be kept in each in-memory PointBuffer
-        /// </summary>
-        public uint BufferSize { get; }
-        /// <summary>
-        /// The total number of remaining bytes in the stream (based on current stream position)
-        /// </summary>
         public long BytesRemaining => _StreamReader.BaseStream.Length - _StreamReader.BaseStream.Position;
 
+        public uint BufferCount { get; }
+        public uint BufferSize { get; }
+
+        public Type PointType { get; }
+
+        public bool EOF => PointsReturned >= Header.PointCount;
+
         public ILasHeader Header { get; private set; } = null;
-        public IEnumerable<LasVariableLengthRecord> VLRs { get; private set; } = null;
+        public IList<LasVariableLengthRecord> VLRs { get; private set; } = null;
         #endregion
 
         #region Internal Fields / Streams
@@ -58,9 +43,9 @@ namespace Euclid.Las.Reader.Stream
         private AutoResetEvent _NeedDataEvent = new AutoResetEvent(false);
         private AutoResetEvent _DataReadyEvent = new AutoResetEvent(false);
 
-        private AsyncStreamBuffer _A;
-        private AsyncStreamBuffer _B;
-        private AsyncStreamBuffer _Active;
+        private IStreamBuffer _A;
+        private IStreamBuffer _B;
+        private IStreamBuffer _Active;
 
         private byte[] _Buffer;
 
@@ -93,6 +78,9 @@ namespace Euclid.Las.Reader.Stream
         #region Public Methods
         public void Seek(long pos)
         {
+            if (pos < 0) throw new ArgumentOutOfRangeException(nameof(pos));
+            if (pos > _BinaryReader.BaseStream.Length) throw new ArgumentOutOfRangeException(nameof(pos));
+            
             _BinaryReader.BaseStream.Seek(pos, SeekOrigin.Begin);
         }
 
@@ -102,7 +90,7 @@ namespace Euclid.Las.Reader.Stream
             int count = Marshal.SizeOf(typeof(T));
             byte[] buff = _BinaryReader.ReadBytes(count);
 
-            //< Generate the handle, marshal it, then it free it
+            //< Generate the handle, marshal it, then free it
             GCHandle handle = GCHandle.Alloc(buff, GCHandleType.Pinned);
             T result = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
             handle.Free();
@@ -166,7 +154,7 @@ namespace Euclid.Las.Reader.Stream
             PointsReturned++;
         }
 
-        void SetActive(AsyncStreamBuffer buff)
+        void SetActive(IStreamBuffer buff)
         {
             _Active = buff;
         }
@@ -213,7 +201,7 @@ namespace Euclid.Las.Reader.Stream
             }
         }
 
-        void MarshalPoints(AsyncStreamBuffer buff)
+        void MarshalPoints(IStreamBuffer buff)
         {
             if (BytesRemaining > 0)
             {
