@@ -136,15 +136,17 @@ namespace Euclid.Las.Headers.Structs
             _NumPointRecords = count;
         }
 
-        public void CheckExtrema(Vector<double> pos)
+        public void CheckExtrema(IEnumerable<double> pos)
         {
-            _MinX = Math.Min(MinX, pos[0]);
-            _MinY = Math.Min(MinY, pos[1]);
-            _MinZ = Math.Min(MinZ, pos[2]);
+            if (pos.Count() != 3) throw new ArgumentException($"Input position was not 3-Dimensional!");
 
-            _MaxX = Math.Max(MaxX, pos[0]);
-            _MaxY = Math.Max(MaxY, pos[1]);
-            _MaxZ = Math.Max(MaxZ, pos[2]);
+            _MinX = Math.Min(MinX, pos.ElementAt(0));
+            _MinY = Math.Min(MinY, pos.ElementAt(1));
+            _MinZ = Math.Min(MinZ, pos.ElementAt(2));
+
+            _MaxX = Math.Max(MaxX, pos.ElementAt(0));
+            _MaxY = Math.Max(MaxY, pos.ElementAt(1));
+            _MaxZ = Math.Max(MaxZ, pos.ElementAt(2));
         }
 
         public void SetNumVLRs(uint numVlrs)
@@ -154,16 +156,26 @@ namespace Euclid.Las.Headers.Structs
 
         public void UpdateScale(ILasHeader header)
         {
-            _ScaleX = header.ScaleX;
-            _ScaleY = header.ScaleY;
-            _ScaleZ = header.ScaleZ;
+            UpdateScale(header.ScaleX, header.ScaleY, header.ScaleZ);
+        }
+
+        public void UpdateScale(double x, double y, double z)
+        {
+            _ScaleX = x;
+            _ScaleY = y;
+            _ScaleZ = z;
         }
 
         public void UpdateOrigin(ILasHeader header)
         {
-            _OriginX = header.OriginX;
-            _OriginY = header.OriginY;
-            _OriginZ = header.OriginZ;
+            UpdateOrigin(header.OriginX, header.OriginY, header.OriginZ);
+        }
+
+        public void UpdateOrigin(double x, double y, double z)
+        {
+            _OriginX = x;
+            _OriginY = y;
+            _OriginZ = z;
         }
 
         public void SetOffsetToPointData(uint offset)

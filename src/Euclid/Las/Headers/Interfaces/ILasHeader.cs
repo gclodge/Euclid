@@ -32,11 +32,13 @@ namespace Euclid.Las.Headers.Interfaces
         ushort CreationDOY { get; }
 
         void SetPointCount(ulong count);
-        void CheckExtrema(Vector<double> pos);
+        void CheckExtrema(IEnumerable<double> pos);
         void SetNumVLRs(uint numVlrs);
 
         void UpdateScale(ILasHeader header);
+        void UpdateScale(double x, double y, double z);
         void UpdateOrigin(ILasHeader header);
+        void UpdateOrigin(double x, double y, double z);
         void SetOffsetToPointData(uint offset);
     }
 }
