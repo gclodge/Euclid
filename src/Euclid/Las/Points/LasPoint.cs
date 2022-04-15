@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 
 using Euclid.Time;
 using Euclid.Las.Points.Interfaces;
@@ -23,45 +19,32 @@ namespace Euclid.Las.Points
 
         public short ScanAngle { get; set; }
 
-        #region Position
         public double X => Position[0];
         public double Y => Position[1];
         public double Z => Position[2];
-        public Vector<double> Position { get; set; }
-        #endregion
+        public Vector<double> Position { get; set; } = CreateVector.Dense(new double[] { double.NaN, double.NaN, double.NaN });
 
-        #region Time
         public double Timestamp { get; set; }
         public DateTime DateTime => GpsTime.Parse(Timestamp);
-        #endregion
 
-        #region Colour
-        public ushort? R { get; set; } = null;
-        public ushort? G { get; set; } = null;
-        public ushort? B { get; set; } = null;
-        public ushort? NIR { get; set; } = null;
-        #endregion
+        public ushort R { get; set; } 
+        public ushort G { get; set; }
+        public ushort B { get; set; }
+        public ushort NIR { get; set; }
 
-        #region Waveform Data
-        public byte? WavePacketDescriptorIndex { get; set; } = null;
-        public uint? WaveformPacketSizeBytes { get; set; } = null;
+        public byte WavePacketDescriptorIndex { get; set; }
+        public uint WaveformPacketSizeBytes { get; set; }
 
-        public float? ReturnPointWaveformLocation { get; set; } = null;
-        public float? X_t { get; set; } = null;
-        public float? Y_t { get; set; } = null;
-        public float? Z_t { get; set; } = null;
+        public float ReturnPointWaveformLocation { get; set; }
+        public float X_t { get; set; }
+        public float Y_t { get; set; }
+        public float Z_t { get; set; }
 
-        public ulong? ByteOffsetToWaveformData { get; set; } = null;
-        #endregion
+        public ulong ByteOffsetToWaveformData { get; set; }
 
-        public LasPoint()
+        public void Update(ILasTime time)
         {
-            Position = CreateVector.Dense(new double[] { double.NaN, double.NaN, double.NaN });
-        }
-
-        public void Update(ILasTime p)
-        {
-            this.Timestamp = p.Timestamp;
+            this.Timestamp = time.Timestamp;
         }
 
         public void Update(ILasRgb p)
@@ -70,10 +53,7 @@ namespace Euclid.Las.Points
             this.G = p.G;
             this.B = p.B;
 
-            if (p is ILas4Band)
-            {
-                this.NIR = ((ILas4Band)p).NIR;
-            }
+            if (p is ILas4Band band) this.NIR = band.NIR;
         }
 
         public void Update(ILasWaveform p)

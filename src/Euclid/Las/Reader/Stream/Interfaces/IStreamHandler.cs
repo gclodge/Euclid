@@ -82,5 +82,11 @@ namespace Euclid.Las.Reader.Stream.Interfaces
         /// </summary>
         /// <param name="lpt">LasPoint to be updated with the next point record</param>
         void GetNextPoint(ref LasPoint lpt);
+
+        /// <summary>
+        /// Get the IStreamHandler ready for first-point-read by pre-reading the ILasHeader and any available ILasVariableLengthRecords
+        /// </summary>
+        /// <returns>Initialized IStreamHandler instance</returns>
+        IStreamHandler Initialize();
     }
 }

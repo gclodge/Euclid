@@ -6,7 +6,7 @@ using Euclid.Las.Headers.Structs;
 
 namespace Euclid.Tests.Las.Headers.Structs
 {
-    public class LasHeaderTests
+    public class LasHeader14Tests
     {
         readonly Faker Faker = new();
 
@@ -19,7 +19,7 @@ namespace Euclid.Tests.Las.Headers.Structs
             var Minima = new double[] { MinValue, MinValue, MinValue };
             var Maxima = new double[] { MaxValue, MaxValue, MaxValue };
 
-            LasHeader Header = new();
+            LasHeader14 Header = new();
             Header.CheckExtrema(Minima);
             Header.CheckExtrema(Maxima);
 
@@ -38,7 +38,7 @@ namespace Euclid.Tests.Las.Headers.Structs
             //< Note that since this is a non-1.4 LasHeader - we can't have more than uint.MaxValue points
             ulong ExpectedPointCount = Faker.Random.ULong(0, uint.MaxValue);
 
-            LasHeader Header = new();
+            LasHeader14 Header = new();
             Header.SetPointCount(ExpectedPointCount);
 
             Assert.Equal(ExpectedPointCount, Header.PointCount);
@@ -49,7 +49,7 @@ namespace Euclid.Tests.Las.Headers.Structs
         {
             uint ExpectedNumber = Faker.Random.UInt();
 
-            LasHeader Header = new();
+            LasHeader14 Header = new();
             Header.SetNumVLRs(ExpectedNumber);
 
             Assert.Equal(ExpectedNumber, Header.NumberOfVLRs);
@@ -60,7 +60,7 @@ namespace Euclid.Tests.Las.Headers.Structs
         {
             uint ExpectedNumber = Faker.Random.UInt();
 
-            LasHeader Header = new();
+            LasHeader14 Header = new();
             Header.SetOffsetToPointData(ExpectedNumber);
 
             Assert.Equal(ExpectedNumber, Header.OffsetToPointData);
@@ -73,14 +73,14 @@ namespace Euclid.Tests.Las.Headers.Structs
             double ExpectedY = Faker.Random.Double();
             double ExpectedZ = Faker.Random.Double();
 
-            LasHeader HeaderA = new();
+            LasHeader14 HeaderA = new();
             HeaderA.UpdateScale(ExpectedX, ExpectedY, ExpectedZ);
 
             Assert.Equal(ExpectedX, HeaderA.ScaleX);
             Assert.Equal(ExpectedY, HeaderA.ScaleY);
             Assert.Equal(ExpectedZ, HeaderA.ScaleZ);
 
-            LasHeader HeaderB = new();
+            LasHeader14 HeaderB = new();
             HeaderB.UpdateScale(HeaderA);
 
             Assert.Equal(ExpectedX, HeaderB.ScaleX);
@@ -95,14 +95,14 @@ namespace Euclid.Tests.Las.Headers.Structs
             double ExpectedY = Faker.Random.Double();
             double ExpectedZ = Faker.Random.Double();
 
-            LasHeader HeaderA = new();
+            LasHeader14 HeaderA = new();
             HeaderA.UpdateOrigin(ExpectedX, ExpectedY, ExpectedZ);
 
             Assert.Equal(ExpectedX, HeaderA.OriginX);
             Assert.Equal(ExpectedY, HeaderA.OriginY);
             Assert.Equal(ExpectedZ, HeaderA.OriginZ);
 
-            LasHeader HeaderB = new();
+            LasHeader14 HeaderB = new();
             HeaderB.UpdateOrigin(HeaderA);
 
             Assert.Equal(ExpectedX, HeaderB.OriginX);

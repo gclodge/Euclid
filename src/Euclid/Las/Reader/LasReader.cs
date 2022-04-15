@@ -13,14 +13,14 @@ namespace Euclid.Las.Reader
         public ulong PointCount => Header.PointCount;
         public ILasHeader Header => _Stream.Header;
 
-        private IStreamHandler _Stream;
+        private readonly IStreamHandler _Stream;
 
         private bool _Disposing;
         private bool _Disposed;
 
         public LasReader(string lasFilePath, uint pointsToBuffer = Constants.DefaultReaderBufferCount)
         {
-            _Stream = new AsyncStreamHandler(lasFilePath, pointsToBuffer);
+            _Stream = new AsyncStreamHandler(lasFilePath, pointsToBuffer).Initialize();
         }
 
         public LasPoint GetNextPoint()

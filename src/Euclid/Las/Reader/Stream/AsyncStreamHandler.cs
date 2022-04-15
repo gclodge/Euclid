@@ -24,10 +24,10 @@ namespace Euclid.Las.Reader.Stream
 
         public long BytesRemaining => _StreamReader.BaseStream.Length - _StreamReader.BaseStream.Position;
 
-        public uint BufferCount { get; }
-        public uint BufferSize { get; }
+        public uint BufferCount { get; private set; }
+        public uint BufferSize { get; private set; }
 
-        public Type PointType { get; }
+        public Type PointType { get; private set; }
 
         public bool EOF => PointsReturned >= Header.PointCount;
 
@@ -36,12 +36,12 @@ namespace Euclid.Las.Reader.Stream
         #endregion
 
         #region Internal Fields / Streams
-        private StreamReader _StreamReader;
-        private BinaryReader _BinaryReader;
+        private readonly StreamReader _StreamReader;
+        private readonly BinaryReader _BinaryReader;
 
         private Thread _ReaderThread;
-        private AutoResetEvent _NeedDataEvent = new AutoResetEvent(false);
-        private AutoResetEvent _DataReadyEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent _NeedDataEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent _DataReadyEvent = new AutoResetEvent(false);
 
         private IStreamBuffer _A;
         private IStreamBuffer _B;
@@ -58,9 +58,15 @@ namespace Euclid.Las.Reader.Stream
             _StreamReader = new StreamReader(filePath);
             _BinaryReader = new BinaryReader(_StreamReader.BaseStream);
 
+            BufferCount = pointBufferCount;
+        }
+
+        #region Fluent Interface
+        public IStreamHandler Initialize()
+        {
             //< Parse the incoming ILasHeader and get the buffer size
             ReadLasHeader();
-            BufferCount = pointBufferCount;
+            
             BufferSize = BufferCount * Header.PointDataRecordLength;
             PointType = PointTypeMap.GetPointType(Header);
             _Buffer = new byte[BufferSize];
@@ -73,7 +79,10 @@ namespace Euclid.Las.Reader.Stream
 
             //< Init (and start filling) the AsyncStreamHandler
             InitializeAsyncStreamHandler();
+
+            return this;
         }
+        #endregion
 
         #region Public Methods
         public void Seek(long pos)
@@ -126,12 +135,9 @@ namespace Euclid.Las.Reader.Stream
 
         void ReadVariableLengthRecords()
         {
-            VLRs = new List<LasVariableLengthRecord>();
-            foreach (int i in Enumerable.Range(0, (int)Header.NumberOfVLRs))
-            {
-                var vlr = new LasVariableLengthRecord(_BinaryReader);
-                VLRs.Append(vlr);
-            }
+            VLRs = Enumerable.Range(0, (int)Header.NumberOfVLRs)
+                             .Select(_ => LasVariableLengthRecord.ReadFromStream(_BinaryReader))
+                             .ToList();
         }
 
         void InitializeAsyncStreamHandler()

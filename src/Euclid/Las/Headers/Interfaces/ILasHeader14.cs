@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
-using MathNet.Numerics.LinearAlgebra;
-
-namespace Euclid.Las.Headers.Interfaces
+﻿namespace Euclid.Las.Headers.Interfaces
 {
     public interface ILasHeader14 : ILasHeader
     {

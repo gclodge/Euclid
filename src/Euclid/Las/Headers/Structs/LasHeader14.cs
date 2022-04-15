@@ -3,8 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-using MathNet.Numerics.LinearAlgebra;
-
 using Euclid.Las.Headers.Interfaces;
 
 namespace Euclid.Las.Headers.Structs
@@ -13,7 +11,6 @@ namespace Euclid.Las.Headers.Structs
     public struct LasHeader14 : ILasHeader14
     {
         #region Fields
-
         [FieldOffset(0)]
         public int _Signature;
 
@@ -92,7 +89,6 @@ namespace Euclid.Las.Headers.Structs
         public ulong _NumPointRecords;
         [FieldOffset(255)]
         public PointRecordsByReturn _NumPointRecordsByReturn;
-
         #endregion
 
         #region 'Get' Operators
@@ -127,9 +123,9 @@ namespace Euclid.Las.Headers.Structs
 
         public uint LegacyNumPointRecords => _LegacyNumberPointRecords;
         public uint[] LegacyNumPointRecordsByReturn => _LegacyNumberPointRecordsByReturn.ToArray();
-
         #endregion
 
+        #region ILasHeader & ILasHeader14 Methods
         public void SetPointCount(ulong count)
         {
             _LegacyNumberPointRecords = (uint)count;
@@ -182,10 +178,12 @@ namespace Euclid.Las.Headers.Structs
         {
             _OffsetToPointData = offset;
         }
-        
+        #endregion
+
+        #region Static Helper Methods
         public static LasHeader14 CreateForWriting(Type pointType)
         {
-            LasHeader14 res = new LasHeader14();
+            LasHeader14 res = new();
             res._VersionMajor = 1;
             res._VersionMinor = 4;
             res._Signature = Constants.LasHeaderSignature;
@@ -212,5 +210,6 @@ namespace Euclid.Las.Headers.Structs
             var type = Points.PointTypeMap.TypeByPointDataFormat[pointRecordFormat];
             return CreateForWriting(type);
         }
+        #endregion
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Euclid.Las.Points.Interfaces
+﻿namespace Euclid.Las.Points.Interfaces
 {
     /// <summary>
     /// Point that contains a (R, G, B, NIR) colour value

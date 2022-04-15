@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
-using MathNet.Numerics.LinearAlgebra;
+﻿using System.Collections.Generic;
 
 namespace Euclid.Las.Headers.Interfaces
 {
