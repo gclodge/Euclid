@@ -2,12 +2,13 @@
 
 using Euclid.Las.Points;
 using Euclid.Las.Headers.Interfaces;
+using Euclid.Las.Reader.Interfaces;
 using Euclid.Las.Reader.Stream;
 using Euclid.Las.Reader.Stream.Interfaces;
 
 namespace Euclid.Las.Reader
 {
-    public class LasReader : IDisposable
+    public class LasReader : ILasReader
     {
         public bool EOF => _Stream.EOF;
         public ulong PointCount => Header.PointCount;
@@ -39,10 +40,7 @@ namespace Euclid.Las.Reader
             _Disposing = disposing;
             if (!_Disposed)
             {
-                if (_Disposing)
-                {
-                    _Stream.Dispose();
-                }
+                if (_Disposing) _Stream.Dispose();
 
                 _Disposed = true;
             }

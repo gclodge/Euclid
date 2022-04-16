@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Euclid.Las.Points.Structs
+﻿namespace Euclid.Las.Points.Structs
 {
     public class FieldUpdater
     {
