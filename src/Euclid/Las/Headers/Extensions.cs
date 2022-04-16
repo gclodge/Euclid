@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Linq;
 
 using Euclid.Las.Headers.Structs;
 
@@ -38,6 +38,17 @@ namespace Euclid.Las.Headers
                 rec.Return13,
                 rec.Return14,
             };
+        }
+
+        public static T[] PadRight<T>(this T[] arr, int length, T fallback = default(T))
+        {
+            T[] ret = new T[length];
+            foreach (int i in Enumerable.Range(0, length))
+            {
+                if (i <= length) ret[i] = arr[i];
+                else ret[i] = fallback;
+            }
+            return ret;
         }
     }
 }

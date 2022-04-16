@@ -10,75 +10,74 @@ namespace Euclid.Las.Headers.Structs
     [StructLayout(LayoutKind.Explicit, Size = 227)]
     public struct LasHeader : ILasHeader
     {
-        #region Fields
+        #region Private Fields
         [FieldOffset(0)]
-        public uint _Signature;
+        private uint _Signature;
 
         [FieldOffset(4)]
-        public ushort _FileSourceID;
+        private ushort _FileSourceID;
         [FieldOffset(6)]
-        public ushort _GlobalEncoding;
+        private readonly ushort _GlobalEncoding;
 
         [FieldOffset(8)]
-        public ulong ProjID_NonCompliant1;
+        private ulong ProjID_NonCompliant1;
         [FieldOffset(16)]
-        public ulong ProjID_NonCompliant2;
+        private ulong ProjID_NonCompliant2;
 
         [FieldOffset(24)]
-        public byte _VersionMajor;
+        private byte _VersionMajor;
         [FieldOffset(25)]
-        public byte _VersionMinor;
+        private byte _VersionMinor;
 
         [FieldOffset(90)]
-        public ushort _FileCreationDOY;
+        private ushort _FileCreationDOY;
         [FieldOffset(92)]
-        public ushort _FileCreationYear;
+        private ushort _FileCreationYear;
         [FieldOffset(94)]
-        public ushort _HeaderSize;
+        private ushort _HeaderSize;
 
         [FieldOffset(96)]
-        public uint _OffsetToPointData;
+        private uint _OffsetToPointData;
         [FieldOffset(100)]
-        public uint _NumberOfVLRs;
+        private uint _NumberOfVLRs;
 
         [FieldOffset(104)]
-        public byte _PointDataFormat;
+        private byte _PointDataFormat;
 
         [FieldOffset(105)]
-        public ushort _PointDataRecordLength;
+        private ushort _PointDataRecordLength;
 
         [FieldOffset(107)]
-        public uint _LegacyNumberPointRecords;
+        private uint _LegacyNumberPointRecords;
         [FieldOffset(111)]
-        public LegacyPointRecordsByReturn _LegacyNumberPointRecordsByReturn;
+        private LegacyPointRecordsByReturn _LegacyNumberPointRecordsByReturn;
 
         [FieldOffset(131 + 8 * 0)]
-        public double _ScaleX;
+        private double _ScaleX;
         [FieldOffset(131 + 8 * 1)]
-        public double _ScaleY;
+        private double _ScaleY;
         [FieldOffset(131 + 8 * 2)]
-        public double _ScaleZ;
+        private double _ScaleZ;
 
         [FieldOffset(131 + 8 * 3)]
-        public double _OriginX;
+        private double _OriginX;
         [FieldOffset(131 + 8 * 4)]
-        public double _OriginY;
+        private double _OriginY;
         [FieldOffset(131 + 8 * 5)]
-        public double _OriginZ;
+        private double _OriginZ;
 
         [FieldOffset(131 + 8 * 6)]
-        public double _MaxX;
+        private double _MaxX;
         [FieldOffset(131 + 8 * 7)]
-        public double _MinX;
+        private double _MinX;
         [FieldOffset(131 + 8 * 8)]
-        public double _MaxY;
+        private double _MaxY;
         [FieldOffset(131 + 8 * 9)]
-        public double _MinY;
+        private double _MinY;
         [FieldOffset(131 + 8 * 10)]
-        public double _MaxZ;
+        private double _MaxZ;
         [FieldOffset(131 + 8 * 11)]
-        public double _MinZ;
-
+        private double _MinZ;
         #endregion
 
         #region 'Get' Operators

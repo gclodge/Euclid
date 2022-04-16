@@ -33,14 +33,49 @@
         byte[] Data { get; }
 
         /// <summary>
-        /// Set the underlying 16-byte UserID field
+        /// Set the underlying 16-byte UserID field with the input string
         /// </summary>
-        /// <param name="userID"></param>
+        /// <param name="userID">string field to be set</param>
         void SetUserID(string userID);
         /// <summary>
-        /// Set the underlying 32-byte Description field
+        /// Set the underlying 16-byte UserID field with the input char[]
+        /// </summary>
+        /// <param name="userID">char[] field to be set</param>
+        void SetUserID(char[] userID);
+        /// <summary>
+        /// Set the underlying 32-byte Description field with the input string
+        /// </summary>
+        /// <param name="description">string to set Description to</param>
+        void SetDescription(string description);
+        /// <summary>
+        /// Set the underlying 32-byte Description field with the input char[]
+        /// </summary>
+        /// <param name="description">char[] to set description to</param>
+        void SetDescription(char[] description);
+
+        /// <summary>
+        /// Fluently set the underlying 16-byte UserID field with the input string
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
+        ILasVariableLengthRecord WithUserID(string userID);
+        /// <summary>
+        /// Fluently set the underlying 16-byte UserID field with the input char[]
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
+        ILasVariableLengthRecord WithUserID(char[] userID);
+        /// <summary>
+        /// Fluently set the underlying 32-byte Description field with the input string
         /// </summary>
         /// <param name="description"></param>
-        void SetDescription(string description);
+        /// <returns></returns>
+        ILasVariableLengthRecord WithDescription(string description);
+        /// <summary>
+        /// Fluently set the underlying 32-byte Description field with the input char[]
+        /// </summary>
+        /// <param name="description"></param>
+        /// <returns></returns>
+        ILasVariableLengthRecord WithDescription(char[] description);
     }
 }
