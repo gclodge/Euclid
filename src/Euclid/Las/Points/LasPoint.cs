@@ -80,5 +80,10 @@ namespace Euclid.Las.Points
             this.GlobalEncoding = p.GlobalEncoding;
             this.Classification = p.Classification;
         }
+
+        public static int GetIntegerPosition(double pos, ILasHeader header)
+        {
+            return (int)((pos - header.OriginX) / header.ScaleX);
+        }
     }
 }

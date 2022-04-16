@@ -25,4 +25,8 @@
     <ProjectReference Include="..\..\src\Euclid\Euclid.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Las\Points\Fixtures\" />
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
+using Euclid.Las.Headers.Interfaces;
 using Euclid.Las.Points.Interfaces;
 
 namespace Euclid.Las.Points.Structs
@@ -10,10 +11,8 @@ namespace Euclid.Las.Points.Structs
         #region Private Fields
         [FieldOffset(4 * 0)]
         private int _X;
-
         [FieldOffset(4 * 1)]
         private int _Y;
-
         [FieldOffset(4 * 2)]
         private int _Z;
 
@@ -22,13 +21,10 @@ namespace Euclid.Las.Points.Structs
 
         [FieldOffset(14)]
         private byte _GlobalEncoding;
-
         [FieldOffset(15)]
         private byte _Classification;
-
         [FieldOffset(16)]
         private byte _ScanAngle;
-
         [FieldOffset(17)]
         private byte _UserData;
 
@@ -86,5 +82,21 @@ namespace Euclid.Las.Points.Structs
             set => _ScanAngle = FieldUpdater.ScanAngleByte(value);
         }
         #endregion
+
+        public static LasPointRecordFormat0 GetLasPointRecordFormat0(LasPoint lpt, ILasHeader header)
+        {
+            return new LasPointRecordFormat0
+            {
+                _X = LasPoint.GetIntegerPosition(lpt.X, header),
+                _Y = LasPoint.GetIntegerPosition(lpt.Y, header),
+                _Z = LasPoint.GetIntegerPosition(lpt.Z, header),
+                _Intensity = lpt.Intensity,
+                _GlobalEncoding = (byte)lpt.GlobalEncoding,
+                _Classification = lpt.Classification,
+                _ScanAngle = (byte)lpt.ScanAngle,
+                _UserData = lpt.UserData,
+                _FlightLine = lpt.FlightLine,
+            };
+        }
     }
 }
