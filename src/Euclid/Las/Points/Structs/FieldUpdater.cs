@@ -16,9 +16,14 @@ namespace Euclid.Las.Points.Structs
         public const double ByteToShortScanAngle = 30000.0 / 127.0;
         public const double ShortScanAngleToDeg = 180.0 / 30000.0;
 
-        public static short ScanAngle(byte scanAngle)
+        public static short ScanAngleShort(byte scanAngle)
         {
             return (short)(ByteToShortScanAngle * scanAngle);
+        }
+
+        public static byte ScanAngleByte(short scanAngle)
+        {
+            return (byte)(scanAngle / ByteToShortScanAngle);
         }
     }
 }

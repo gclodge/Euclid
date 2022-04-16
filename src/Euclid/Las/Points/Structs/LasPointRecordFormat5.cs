@@ -66,7 +66,7 @@ namespace Euclid.Las.Points.Structs
         public ushort Intensity => _Intensity;
         public ushort FlightLine => _FlightLine;
         public ushort GlobalEncoding => _GlobalEncoding;
-        public short ScanAngle => FieldUpdater.ScanAngle(_ScanAngle);
+        public short ScanAngle => FieldUpdater.ScanAngleShort(_ScanAngle);
         public double Timestamp => _Timestamp;
         public ushort R => _R;
         public ushort G => _G;

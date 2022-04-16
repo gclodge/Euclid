@@ -35,7 +35,9 @@ namespace Euclid.Tests.Las.Headers
             var vlrB = new LasVariableLengthRecord().WithUserID(userID.ToCharArray());
 
             Assert.Equal(userID, vlrA.UserID);
+            Assert.Equal(LasVariableLengthRecord.MaxUserIDLength, vlrA.UserID.Length);
             Assert.Equal(userID, vlrB.UserID);
+            Assert.Equal(LasVariableLengthRecord.MaxUserIDLength, vlrB.UserID.Length);
         }
 
         [Fact]
@@ -50,7 +52,9 @@ namespace Euclid.Tests.Las.Headers
             vlrB.SetDescription(description.ToCharArray());
 
             Assert.Equal(description, vlrA.Description);
+            Assert.Equal(LasVariableLengthRecord.MaxDescriptionLength, vlrA.Description.Length);
             Assert.Equal(description, vlrB.Description);
+            Assert.Equal(LasVariableLengthRecord.MaxDescriptionLength, vlrB.Description.Length);
         }
 
         [Fact]
@@ -63,7 +67,9 @@ namespace Euclid.Tests.Las.Headers
             var vlrB = new LasVariableLengthRecord().WithDescription(description.ToCharArray());
 
             Assert.Equal(description, vlrA.Description);
+            Assert.Equal(LasVariableLengthRecord.MaxDescriptionLength, vlrA.Description.Length);
             Assert.Equal(description, vlrB.Description);
+            Assert.Equal(LasVariableLengthRecord.MaxDescriptionLength, vlrB.Description.Length);
         }
 
         [Fact]

@@ -37,18 +37,54 @@ namespace Euclid.Las.Points.Structs
         #endregion
 
         #region Public Fields
-        public int X => _X;
-        public int Y => _Y;
-        public int Z => _Z;
+        public int X
+        {
+            get => _X;
+            set => _X = value;
+        }
+        public int Y
+        {
+            get => _Y;
+            set => _Y = value;
+        }
+        public int Z
+        {
+            get => _Z;
+            set => _Z = value;
+        }
 
-        public byte Classification => _Classification;
-        public byte UserData => _UserData;
+        public byte Classification
+        {
+            get => _Classification;
+            set => _Classification = value;
+        }
+        public byte UserData
+        {
+            get => _UserData;
+            set => _UserData = value;
+        }
 
-        public ushort Intensity => _Intensity;
-        public ushort FlightLine => _FlightLine;
-        public ushort GlobalEncoding => _GlobalEncoding;
+        public ushort Intensity
+        {
+            get => _Intensity;
+            set => _Intensity = value;
+        }
+        public ushort FlightLine
+        {
+            get => _FlightLine;
+            set => _FlightLine = value;
+        }
+        public ushort GlobalEncoding
+        {
+            get => _GlobalEncoding;
+            set => _GlobalEncoding = (byte)value;
+        }
 
-        public short ScanAngle => FieldUpdater.ScanAngle(_ScanAngle);
+        public short ScanAngle
+        {
+            get => FieldUpdater.ScanAngleShort(_ScanAngle);
+            set => _ScanAngle = FieldUpdater.ScanAngleByte(value);
+        }
         #endregion
     }
 }
