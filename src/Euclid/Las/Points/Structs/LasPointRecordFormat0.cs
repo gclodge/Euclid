@@ -78,12 +78,12 @@ namespace Euclid.Las.Points.Structs
 
         public short ScanAngle
         {
-            get => FieldUpdater.ScanAngleShort(_ScanAngle);
-            set => _ScanAngle = FieldUpdater.ScanAngleByte(value);
+            get => _ScanAngle;
+            set => _ScanAngle = (byte)value;
         }
         #endregion
 
-        public static LasPointRecordFormat0 GetLasPointRecordFormat0(LasPoint lpt, ILasHeader header)
+        public static LasPointRecordFormat0 GetLasPointStruct(LasPoint lpt, ILasHeader header)
         {
             return new LasPointRecordFormat0
             {
