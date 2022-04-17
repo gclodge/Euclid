@@ -231,5 +231,150 @@ namespace Euclid.Tests.Las.Points.Structs
             Assert.Equal(lpt.Y_t, lp5.Y_t);
             Assert.Equal(lpt.Z_t, lp5.Z_t);
         }
+
+        [Fact]
+        public void GetLasPointRecordFormat6Test()
+        {
+            var lpt = _pointFaker.Generate();
+            var header = _headerMock.Object;
+
+            int expectedX = LasPoint.GetIntegerPosition(lpt.X, header);
+            int expectedY = LasPoint.GetIntegerPosition(lpt.Y, header);
+            int expectedZ = LasPoint.GetIntegerPosition(lpt.Z, header);
+
+            var lp6 = LasPointRecordFormat6.GetLasPointStruct(lpt, header);
+
+            Assert.Equal(expectedX, lp6.X);
+            Assert.Equal(expectedY, lp6.Y);
+            Assert.Equal(expectedZ, lp6.Z);
+            Assert.Equal(lpt.Intensity, lp6.Intensity);
+            Assert.Equal(lpt.GlobalEncoding, lp6.GlobalEncoding);
+            Assert.Equal(lpt.Classification, lp6.Classification);
+            Assert.Equal(lpt.ScanAngle, lp6.ScanAngle);
+            Assert.Equal(lpt.UserData, lp6.UserData);
+            Assert.Equal(lpt.FlightLine, lp6.FlightLine);
+            Assert.Equal(lpt.Timestamp, lp6.Timestamp);
+        }
+
+        [Fact]
+        public void GetLasPointRecordFormat7Test()
+        {
+            var lpt = _pointFaker.Generate();
+            var header = _headerMock.Object;
+
+            int expectedX = LasPoint.GetIntegerPosition(lpt.X, header);
+            int expectedY = LasPoint.GetIntegerPosition(lpt.Y, header);
+            int expectedZ = LasPoint.GetIntegerPosition(lpt.Z, header);
+
+            var lp7 = LasPointRecordFormat7.GetLasPointStruct(lpt, header);
+
+            Assert.Equal(expectedX, lp7.X);
+            Assert.Equal(expectedY, lp7.Y);
+            Assert.Equal(expectedZ, lp7.Z);
+            Assert.Equal(lpt.Intensity, lp7.Intensity);
+            Assert.Equal(lpt.GlobalEncoding, lp7.GlobalEncoding);
+            Assert.Equal(lpt.Classification, lp7.Classification);
+            Assert.Equal(lpt.ScanAngle, lp7.ScanAngle);
+            Assert.Equal(lpt.UserData, lp7.UserData);
+            Assert.Equal(lpt.FlightLine, lp7.FlightLine);
+            Assert.Equal(lpt.Timestamp, lp7.Timestamp);
+            Assert.Equal(lpt.R, lp7.R);
+            Assert.Equal(lpt.G, lp7.G);
+            Assert.Equal(lpt.B, lp7.B);
+        }
+
+        [Fact]
+        public void GetLasPointRecordFormat8Test()
+        {
+            var lpt = _pointFaker.Generate();
+            var header = _headerMock.Object;
+
+            int expectedX = LasPoint.GetIntegerPosition(lpt.X, header);
+            int expectedY = LasPoint.GetIntegerPosition(lpt.Y, header);
+            int expectedZ = LasPoint.GetIntegerPosition(lpt.Z, header);
+
+            var lp8 = LasPointRecordFormat8.GetLasPointStruct(lpt, header);
+
+            Assert.Equal(expectedX, lp8.X);
+            Assert.Equal(expectedY, lp8.Y);
+            Assert.Equal(expectedZ, lp8.Z);
+            Assert.Equal(lpt.Intensity, lp8.Intensity);
+            Assert.Equal(lpt.GlobalEncoding, lp8.GlobalEncoding);
+            Assert.Equal(lpt.Classification, lp8.Classification);
+            Assert.Equal(lpt.ScanAngle, lp8.ScanAngle);
+            Assert.Equal(lpt.UserData, lp8.UserData);
+            Assert.Equal(lpt.FlightLine, lp8.FlightLine);
+            Assert.Equal(lpt.Timestamp, lp8.Timestamp);
+            Assert.Equal(lpt.R, lp8.R);
+            Assert.Equal(lpt.G, lp8.G);
+            Assert.Equal(lpt.B, lp8.B);
+            Assert.Equal(lpt.NIR, lp8.NIR);
+        }
+
+        [Fact]
+        public void GetLasPointRecordFormat9Test()
+        {
+            var lpt = _pointFaker.Generate();
+            var header = _headerMock.Object;
+
+            int expectedX = LasPoint.GetIntegerPosition(lpt.X, header);
+            int expectedY = LasPoint.GetIntegerPosition(lpt.Y, header);
+            int expectedZ = LasPoint.GetIntegerPosition(lpt.Z, header);
+
+            var lp9 = LasPointRecordFormat9.GetLasPointStruct(lpt, header);
+
+            Assert.Equal(expectedX, lp9.X);
+            Assert.Equal(expectedY, lp9.Y);
+            Assert.Equal(expectedZ, lp9.Z);
+            Assert.Equal(lpt.Intensity, lp9.Intensity);
+            Assert.Equal(lpt.GlobalEncoding, lp9.GlobalEncoding);
+            Assert.Equal(lpt.Classification, lp9.Classification);
+            Assert.Equal(lpt.ScanAngle, lp9.ScanAngle);
+            Assert.Equal(lpt.UserData, lp9.UserData);
+            Assert.Equal(lpt.FlightLine, lp9.FlightLine);
+            Assert.Equal(lpt.Timestamp, lp9.Timestamp);
+            Assert.Equal(lpt.WavePacketDescriptorIndex, lp9.WavePacketDescriptorIndex);
+            Assert.Equal(lpt.ByteOffsetToWaveformData, lp9.ByteOffsetToWaveformData);
+            Assert.Equal(lpt.WaveformPacketSizeBytes, lp9.WaveformPacketSizeBytes);
+            Assert.Equal(lpt.ReturnPointWaveformLocation, lp9.ReturnPointWaveformLocation);
+            Assert.Equal(lpt.X_t, lp9.X_t);
+            Assert.Equal(lpt.Y_t, lp9.Y_t);
+            Assert.Equal(lpt.Z_t, lp9.Z_t);
+        }
+
+        [Fact]
+        public void GetLasPointRecordFormat10Test()
+        {
+            var lpt = _pointFaker.Generate();
+            var header = _headerMock.Object;
+
+            int expectedX = LasPoint.GetIntegerPosition(lpt.X, header);
+            int expectedY = LasPoint.GetIntegerPosition(lpt.Y, header);
+            int expectedZ = LasPoint.GetIntegerPosition(lpt.Z, header);
+
+            var lp10 = LasPointRecordFormat10.GetLasPointStruct(lpt, header);
+
+            Assert.Equal(expectedX, lp10.X);
+            Assert.Equal(expectedY, lp10.Y);
+            Assert.Equal(expectedZ, lp10.Z);
+            Assert.Equal(lpt.Intensity, lp10.Intensity);
+            Assert.Equal(lpt.GlobalEncoding, lp10.GlobalEncoding);
+            Assert.Equal(lpt.Classification, lp10.Classification);
+            Assert.Equal(lpt.ScanAngle, lp10.ScanAngle);
+            Assert.Equal(lpt.UserData, lp10.UserData);
+            Assert.Equal(lpt.FlightLine, lp10.FlightLine);
+            Assert.Equal(lpt.Timestamp, lp10.Timestamp);
+            Assert.Equal(lpt.R, lp10.R);
+            Assert.Equal(lpt.G, lp10.G);
+            Assert.Equal(lpt.B, lp10.B);
+            Assert.Equal(lpt.NIR, lp10.NIR);
+            Assert.Equal(lpt.WavePacketDescriptorIndex, lp10.WavePacketDescriptorIndex);
+            Assert.Equal(lpt.ByteOffsetToWaveformData, lp10.ByteOffsetToWaveformData);
+            Assert.Equal(lpt.WaveformPacketSizeBytes, lp10.WaveformPacketSizeBytes);
+            Assert.Equal(lpt.ReturnPointWaveformLocation, lp10.ReturnPointWaveformLocation);
+            Assert.Equal(lpt.X_t, lp10.X_t);
+            Assert.Equal(lpt.Y_t, lp10.Y_t);
+            Assert.Equal(lpt.Z_t, lp10.Z_t);
+        }
     }
 }
