@@ -80,31 +80,123 @@ namespace Euclid.Las.Headers.Structs
         private double _MinZ;
         #endregion
 
-        #region 'Get' Operators
-        public ulong PointCount => _LegacyNumberPointRecords;
-        public uint[] PointCountByReturn => _LegacyNumberPointRecordsByReturn.ToArray();
-        public double ScaleX => _ScaleX;
-        public double ScaleY => _ScaleY;
-        public double ScaleZ => _ScaleZ;
-        public double OriginX => _OriginX;
-        public double OriginY => _OriginY;
-        public double OriginZ => _OriginZ;
-        public double MaxX => _MaxX;
-        public double MinX => _MinX;
-        public double MaxY => _MaxY;
-        public double MinY => _MinY;
-        public double MaxZ => _MaxZ;
-        public double MinZ => _MinZ;
-        public ushort PointDataRecordLength => _PointDataRecordLength;
-        public byte PointDataFormat => _PointDataFormat;
-        public uint OffsetToPointData => _OffsetToPointData;
-        public uint NumberOfVLRs => _NumberOfVLRs;
-        public byte VersionMajor => _VersionMajor;
-        public byte VersionMinor => _VersionMinor;
+        #region Public Fields
+        public ulong PointCount
+        {
+            get => _LegacyNumberPointRecords;
+            set => _LegacyNumberPointRecords = (uint)value;
+        }
+        public uint[] PointCountByReturn
+        {
+            get => _LegacyNumberPointRecordsByReturn.ToArray();
+            set => _LegacyNumberPointRecordsByReturn = LegacyPointRecordsByReturn.Parse(value);
+        }
+        public double ScaleX 
+        {
+            get => _ScaleX;
+            set => _ScaleX = value;
+        }
+        public double ScaleY 
+        {
+            get => _ScaleY;
+            set => _ScaleY = value;
+        }
+        public double ScaleZ 
+        {
+            get => _ScaleZ;
+            set => _ScaleZ = value;
+        }
+        public double OriginX 
+        {
+            get => _OriginX;
+            set => _OriginX = value;
+        }
+        public double OriginY 
+        {
+            get => _OriginY;
+            set => _OriginY = value;
+        }
+        public double OriginZ 
+        {
+            get => _OriginZ;
+            set => _OriginZ = value;
+        }
+        public double MaxX
+        {
+            get => _MaxX;
+            set => _MaxX = value;
+        }
+        public double MinX
+        {
+            get => _MinX;
+            set => _MinX = value;
+        }
+        public double MaxY
+        {
+            get => _MaxY;
+            set => _MaxY = value;
+        }
+        public double MinY 
+        {
+            get => _MinY;
+            set => _MinY = value;
+        }
+        public double MaxZ 
+        {
+            get => _MaxZ;
+            set => _MaxZ = value;
+        }
+        public double MinZ 
+        {
+            get => _MinZ;
+            set => _MinZ = value;
+        }
+        public ushort PointDataRecordLength
+        {
+            get => _PointDataRecordLength;
+            set => _PointDataRecordLength = value;
+        }
+        public byte PointDataFormat
+        {
+            get => _PointDataFormat;
+            set => _PointDataFormat = value;
+        }
+        public uint OffsetToPointData
+        {
+            get => _OffsetToPointData;
+            set => _OffsetToPointData = value;
+        }
+        public uint NumberOfVLRs
+        {
+            get => _NumberOfVLRs;
+            set => _NumberOfVLRs = value;
+        }
+        public byte VersionMajor
+        {
+            get => _VersionMajor;
+            set => _VersionMajor = value;
+        }
+        public byte VersionMinor
+        {
+            get => _VersionMinor;
+            set => _VersionMinor = value;
+        }
 
-        public ushort CreationDOY => _FileCreationDOY;
-        public ushort CreationYear => _FileCreationYear;
-        public ushort HeaderSize => _HeaderSize;
+        public ushort CreationDOY
+        {
+            get => _FileCreationDOY;
+            set => _FileCreationDOY = value;
+        }
+        public ushort CreationYear
+        {
+            get => _FileCreationYear;
+            set => _FileCreationYear = value;
+        }
+        public ushort HeaderSize
+        {
+            get => _HeaderSize;
+            set => _HeaderSize = value;
+        }
         #endregion
 
         #region ILasHeader Methods

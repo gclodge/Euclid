@@ -9,9 +9,9 @@ namespace Euclid.Las.Points
 {
     static class PointTypeMap
     {
-        public static readonly Dictionary<byte, Type> TypeByPointDataFormat = new Dictionary<byte, Type>();
-        public static readonly Dictionary<Type, byte> PointDataFormatByType = new Dictionary<Type, byte>();
-        public static readonly Dictionary<Type, ushort> SizeByType = new Dictionary<Type, ushort>();
+        public static readonly Dictionary<byte, Type> TypeByPointDataFormat = new();
+        public static readonly Dictionary<Type, byte> PointDataFormatByType = new();
+        public static readonly Dictionary<Type, ushort> SizeByType = new();
 
         static PointTypeMap()
         {
@@ -35,16 +35,25 @@ namespace Euclid.Las.Points
             SizeByType.Add(typeof(T), (ushort)Marshal.SizeOf<T>());
         }
 
-        public static Type GetPointType(ILasHeader header)
+        public static byte GetPointRecordTypeByte(Type T)
         {
-            if (TypeByPointDataFormat.ContainsKey(header.PointDataFormat))
-            {
-                return TypeByPointDataFormat[header.PointDataFormat];
-            }
-            else
-            {
-                throw new NotImplementedException($"Unknown PointDataRecord format encountered: {header.PointDataFormat} - expected [0, 10]");
-            }
+            if (!PointDataFormatByType.ContainsKey(T)) throw new NotImplementedException($"Unknown PointDataFormat type entered: {T}");
+
+            return PointDataFormatByType[T];
+        }
+
+        public static ushort GetPointRecordLength(Type T)
+        {
+            if (!SizeByType.ContainsKey(T)) throw new NotImplementedException($"Unknown PointDataFormat type entered: {T}");
+
+            return SizeByType[T];
+        }
+
+        public static Type GetPointRecordType(ILasHeader header)
+        {
+            if (!TypeByPointDataFormat.ContainsKey(header.PointDataFormat)) throw new NotImplementedException($"Unknown PointDataRecord format encountered: {header.PointDataFormat} - expected [0, 10]");
+
+            return TypeByPointDataFormat[header.PointDataFormat];
         }
     }
 }

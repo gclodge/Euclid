@@ -68,7 +68,7 @@ namespace Euclid.Las.Reader.Stream
             ReadLasHeader();
             
             BufferSize = BufferCount * Header.PointDataRecordLength;
-            PointType = PointTypeMap.GetPointType(Header);
+            PointType = PointTypeMap.GetPointRecordType(Header);
             _Buffer = new byte[BufferSize];
 
             //< Parse any available LasVariableLengthRecords

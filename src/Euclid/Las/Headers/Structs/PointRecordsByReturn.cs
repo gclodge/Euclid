@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Euclid.Las.Headers.Structs
 {
@@ -15,6 +16,20 @@ namespace Euclid.Las.Headers.Structs
         public uint Return3;
         [FieldOffset(16)]
         public uint Return4;
+
+        public static LegacyPointRecordsByReturn Parse(uint[] values)
+        {
+            if (values.Length < 5) throw new ArgumentException($"LegacyPointRecordsByReturn array must have at least 5 elements");
+
+            return new LegacyPointRecordsByReturn()
+            {
+                Return0 = values[0],
+                Return1 = values[1],
+                Return2 = values[2],
+                Return3 = values[3],
+                Return4 = values[4]
+            };
+        }
     }
 
     [StructLayout(LayoutKind.Explicit, Size = 120)]
@@ -50,5 +65,29 @@ namespace Euclid.Las.Headers.Structs
         public ulong Return13;
         [FieldOffset(14 * 8)]
         public ulong Return14;
+
+        public static PointRecordsByReturn Parse(uint[] values)
+        {
+            if (values.Length < 5) throw new ArgumentException($"PointRecordsByReturn array must have at least 15 elements");
+
+            return new PointRecordsByReturn()
+            {
+                Return0 = values[0],
+                Return1 = values[1],
+                Return2 = values[2],
+                Return3 = values[3],
+                Return4 = values[4],
+                Return5 = values[5],
+                Return6 = values[6],
+                Return7 = values[7],
+                Return8 = values[8],
+                Return9 = values[9],
+                Return10 = values[10],
+                Return11 = values[11],
+                Return12 = values[12],
+                Return13 = values[13],
+                Return14 = values[14]
+            };
+        }
     }
 }
