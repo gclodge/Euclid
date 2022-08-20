@@ -6,6 +6,7 @@ namespace Euclid.Time
     {
         /// <summary>
         /// All the dates (since Jan 6 1980) that a Leap Second has been added to the total offset
+        /// TODO - Make this parse-able from app settings or something so it can be updated externally
         /// </summary>
         public static readonly DateTime[] LeapSecondDates = new DateTime[]
         {
