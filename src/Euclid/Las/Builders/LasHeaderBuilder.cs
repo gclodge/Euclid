@@ -2,8 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using Euclid.Las.Headers.Structs;
-using Euclid.Las.Headers.Interfaces;
+using Euclid.Las.Interfaces;
 using Euclid.Las.Builders.Interfaces;
 
 namespace Euclid.Las.Builders
@@ -101,23 +100,12 @@ namespace Euclid.Las.Builders
 
         public ILasHeaderBuilder SetPointCount(ulong count)
         {
-            header.PointCount = count;
+            header.SetPointCount(count);
             return this;
         }
         public ILasHeaderBuilder SetPointDataFormat(byte format)
         {
-            header.PointDataFormat = format;
-            return this;
-        }
-        public ILasHeaderBuilder SetPointDataRecordLength(ushort length)
-        {
-            header.PointDataRecordLength = length;
-            return this;
-        }
-        public ILasHeaderBuilder SetPointType(Type T)
-        {
-            header.PointDataFormat = Points.PointTypeMap.GetPointRecordTypeByte(T);
-            header.PointDataRecordLength = Points.PointTypeMap.GetPointRecordLength(T);
+            header.SetPointDataFormat(format);
             return this;
         }
 

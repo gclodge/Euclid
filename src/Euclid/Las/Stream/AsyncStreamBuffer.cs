@@ -1,8 +1,6 @@
 ﻿using System;
 
-using Euclid.Las.Points;
-using Euclid.Las.Points.Interfaces;
-using Euclid.Las.Headers.Interfaces;
+using Euclid.Las.Interfaces;
 using Euclid.Las.Stream.Interfaces;
 
 namespace Euclid.Las.Stream
@@ -33,7 +31,7 @@ namespace Euclid.Las.Stream
 
         public LasPoint GetNext(ILasHeader header)
         {
-            LasPoint lpt = new LasPoint();
+            LasPoint lpt = new();
             GetNext(header, ref lpt);
             return lpt;
         }

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Euclid.Las.Points;
-using Euclid.Las.Headers;
-using Euclid.Las.Headers.Interfaces;
+using Euclid.Las.Interfaces;
 
 namespace Euclid.Las.Stream.Interfaces
 {
-    internal interface IStreamHandler : IDisposable
+    public interface IStreamHandler : IDisposable
     {
         /// <summary>
         /// Total number of ticks that have passed while actively reading from the underlying stream
