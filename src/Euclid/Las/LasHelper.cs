@@ -1,15 +1,16 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using System.Collections;
-using System.Collections.Generic;
 
 namespace Euclid.Las
 {
     public static class LasHelper
     {
+        /// <summary>
+        /// Generate the GlobalEncoding flag to be used in an ILasHeader
+        /// </summary>
+        /// <param name="useGpsStandardTime">Boolean flag indicating if we should use GPS Standard time (true) or Seconds of Week (false)</param>
+        /// <param name="useProjWkt">(LAS1.4 ONLY) - Boolean flag indicating if the LAS file's CRS is encoded as a Projection WKT VLR</param>
+        /// <returns></returns>
         public static ushort GetGlobalEncoding(bool useGpsStandardTime = true, bool useProjWkt = false)
         {
             var newBits = new BitArray(16);

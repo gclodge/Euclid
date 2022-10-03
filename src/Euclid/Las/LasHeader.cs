@@ -9,8 +9,15 @@ namespace Euclid.Las
 {
     public class LasHeader : ILasHeader
     {
+        /// <summary>
+        /// The currently supported 'VersionMinor' flags - assuming a 'VersionMajor' of 1
+        /// </summary>
+        public static readonly HashSet<int> SupportedVersionMinors = new() { 2, 4 };
+
+        public const int IdentifierLength = 32;
+
         #region ILasHeader Fields & Properties
-        public uint FileSignature { get; set; } = Constants.LasHeaderSignature;
+        public uint FileSignature { get; private set; } = Constants.LasHeaderSignature;
 
         public ushort FileSourceID { get; set; } = 0;
         public ushort GlobalEncoding { get; set; } = LasHelper.GetGlobalEncoding();
@@ -23,8 +30,8 @@ namespace Euclid.Las
         public byte VersionMajor { get; set; } = 1;
         public byte VersionMinor { get; set; } = 2;
 
-        public char[] SystemIdentifier { get; set; } = new char[32];
-        public char[] GeneratingSoftware { get; set; } = new char[32];
+        public char[] SystemIdentifier { get; set; } = new char[IdentifierLength];
+        public char[] GeneratingSoftware { get; set; } = new char[IdentifierLength];
 
         public ushort CreationYear { get; set; } = (ushort)DateTime.Now.Year;
         public ushort CreationDOY { get; set; } = (ushort)DateTime.Now.DayOfYear;
@@ -36,8 +43,8 @@ namespace Euclid.Las
         public byte PointDataFormat { get; private set; } = 0;
         public ushort PointDataRecordLength { get; private set; } = PointTypeMap.GetPointRecordLength(0);
 
-        public uint LegacyNumPointRecords { get; private set; } = 0;
-        public uint[] LegacyNumPointRecordsByReturn { get; private set; } = new uint[5];
+        public uint LegacyNumPointRecords { get; set; } = 0;
+        public uint[] LegacyNumPointRecordsByReturn { get; set; } = new uint[5];
 
         public double ScaleX { get; set; } = Constants.DefaultScale;
         public double ScaleY { get; set; } = Constants.DefaultScale;
@@ -60,10 +67,52 @@ namespace Euclid.Las
         public ulong NumPointRecords { get; private set; } = 0;
         public ulong[] NumPointRecordsByReturn { get; set; } = new ulong[15];
 
-        public ulong PointCount { get; private set; } = 0;
+        public ulong PointCount => NumPointRecords < LegacyNumPointRecords ? LegacyNumPointRecords : NumPointRecords;
         #endregion
 
         #region ILasHeader Methods
+        public void SetPointCount(ulong count)
+        {
+            LegacyNumPointRecords = (uint)count;
+            NumPointRecords = count;
+        }
+
+        public void SetSystemIdentifier(string systemIdentifier)
+        {
+            if (systemIdentifier == null) throw new ArgumentNullException(nameof(systemIdentifier));
+            
+            char[] sid = systemIdentifier.ToCharArray();
+            SetSystemIdentifier(sid);
+        }
+
+        public void SetSystemIdentifier(char[] systemIdentifier)
+        {
+            if (systemIdentifier.Length > IdentifierLength)
+                SystemIdentifier = systemIdentifier.Take(IdentifierLength).ToArray();
+            else if (systemIdentifier.Length < IdentifierLength)
+                SystemIdentifier = systemIdentifier.PadRight(IdentifierLength, Constants.DefaultChar);
+            else
+                SystemIdentifier = systemIdentifier;
+        }
+
+        public void SetGeneratingSoftware(string generatingSoftware)
+        {
+            if (generatingSoftware == null) throw new ArgumentNullException(nameof(generatingSoftware));
+
+            char[] gen = generatingSoftware.ToCharArray();
+            SetGeneratingSoftware(gen);
+        }
+
+        public void SetGeneratingSoftware(char[] generatingSoftware)
+        {
+            if (generatingSoftware.Length > IdentifierLength)
+                GeneratingSoftware = generatingSoftware.Take(IdentifierLength).ToArray();
+            else if (generatingSoftware.Length < IdentifierLength)
+                GeneratingSoftware = generatingSoftware.PadRight(IdentifierLength, Constants.DefaultChar);
+            else
+                GeneratingSoftware = generatingSoftware;
+        }
+
         public void CheckExtrema(IEnumerable<double> pos)
         {
             if (pos.Count() != 3) throw new ArgumentException($"Input position was not 3-Dimensional!");
@@ -77,22 +126,18 @@ namespace Euclid.Las
             MaxZ = Math.Max(MaxZ, pos.ElementAt(2));
         }
 
-        public void SetPointCount(ulong count)
-        {
-            LegacyNumPointRecords = (uint)count;
-            NumPointRecords = count;
-            PointCount = count;
-        }
-
         public void SetPointDataFormat(byte format)
         {
             if (format < 0 || format > 10) throw new ArgumentException($"PointRecordFormat must be between range of [0, 10].");
 
             PointDataFormat = format;
+            PointDataRecordLength = PointTypeMap.GetPointRecordLength(PointDataFormat);
         }
 
         public void SetNumVLRs(uint numVlrs)
         {
+            if (numVlrs < 0) throw new ArgumentException($"Cannot set Number of Variable Length Records to a negative value");
+
             NumberOfVLRs = numVlrs;
         }
 
@@ -101,24 +146,24 @@ namespace Euclid.Las
             OffsetToPointData = offset;
         }
 
-        public void UpdateScale(ILasHeader header)
+        public void SetScale(ILasHeader header)
         {
-            UpdateScale(header.ScaleX, header.ScaleY, header.ScaleZ);
+            SetScale(header.ScaleX, header.ScaleY, header.ScaleZ);
         }
 
-        public void UpdateScale(double x, double y, double z)
+        public void SetScale(double x, double y, double z)
         {
             ScaleX = x;
             ScaleY = y;
             ScaleZ = z;
         }
 
-        public void UpdateOrigin(ILasHeader header)
+        public void SetOrigin(ILasHeader header)
         {
-            UpdateOrigin(header.OriginX, header.OriginY, header.OriginZ);
+            SetOrigin(header.OriginX, header.OriginY, header.OriginZ);
         }
 
-        public void UpdateOrigin(double x, double y, double z)
+        public void SetOrigin(double x, double y, double z)
         {
             OriginX = x;
             OriginY = y;
@@ -141,6 +186,8 @@ namespace Euclid.Las
 
             #region LAS 1.2 Parsing
             header.FileSignature = reader.ReadUInt32();
+            if (header.FileSignature != Constants.LasHeaderSignature) throw new Exception($"Invalid 'FileSignature' encountered: {header.FileSignature} - should only ever be {Constants.LasHeaderSignature}");
+
             header.FileSourceID = reader.ReadUInt16();
             header.GlobalEncoding = reader.ReadUInt16();
             header.Guid1 = reader.ReadUInt32();
@@ -149,6 +196,10 @@ namespace Euclid.Las
             header.Guid4 = reader.ReadChars(8);
             header.VersionMajor = reader.ReadByte();
             header.VersionMinor = reader.ReadByte();
+
+            if (header.VersionMajor != 1) throw new Exception($"Unknown 'VersionMajor' encountered: {header.VersionMajor}");
+            if (!SupportedVersionMinors.Contains(header.VersionMinor)) throw new Exception($"Unsupported 'VersionMinor' encountered: {header.VersionMinor} - currently we support only LAS1.2 & 1.4");
+
             header.SystemIdentifier = reader.ReadChars(32);
             header.GeneratingSoftware = reader.ReadChars(32);
             header.CreationDOY = reader.ReadUInt16();
@@ -158,6 +209,7 @@ namespace Euclid.Las
             header.NumberOfVLRs = reader.ReadUInt32();
             header.PointDataFormat = reader.ReadByte();
             header.PointDataRecordLength = reader.ReadUInt16();
+            header.LegacyNumPointRecords = reader.ReadUInt32();
             for (int i = 0; i < header.LegacyNumPointRecordsByReturn.Length; i++)
             {
                 header.LegacyNumPointRecordsByReturn[i] = reader.ReadUInt32();
@@ -177,7 +229,7 @@ namespace Euclid.Las
             #endregion
 
             //< If we're just LAS 1.2 - we can return the header now
-            if (header.VersionMajor == 1 && header.VersionMinor == 2) return header;
+            if (header.VersionMinor == 2) return header;
 
             //< Otherwise - parse the remaining LAS 1.4 fields
             header.StartOfWaveformDataPacketRecord = reader.ReadUInt64();

@@ -40,7 +40,6 @@ namespace Euclid.Las
             if (userID.Length > MaxUserIDLength) throw new($"UserID must be no more than 16 characters in length");
             if (userID.Length < MaxUserIDLength) userID = userID.PadRight(MaxUserIDLength, DefaultChar);
 
-
             this.UserID = userID;
         }
 

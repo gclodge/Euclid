@@ -7,7 +7,7 @@ using Euclid.Las.Interfaces;
 
 namespace Euclid.Las
 {
-    static class PointTypeMap
+    public static class PointTypeMap
     {
         public static readonly Dictionary<byte, Type> TypeByPointDataFormat = new();
         public static readonly Dictionary<Type, byte> PointDataFormatByType = new();
@@ -34,8 +34,6 @@ namespace Euclid.Las
             PointDataFormatByType.Add(typeof(T), pointType);
             SizeByType.Add(typeof(T), (ushort)Marshal.SizeOf<T>());
         }
-
-        
 
         public static byte GetPointRecordTypeByte(Type T)
         {

@@ -11,6 +11,7 @@ namespace Euclid.Las
         public const uint LasHeaderVersionMajorOffset = 24;
         public const uint LasHeaderVersionMinorOffset = 25;
 
+        public const char DefaultChar = '\0';
         public const double DefaultScale = 0.01;
         public const double DefaultOffset = 0.0;
 
