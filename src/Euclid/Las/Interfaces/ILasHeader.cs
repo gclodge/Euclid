@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Euclid.Las.Interfaces
 {
@@ -171,19 +172,46 @@ namespace Euclid.Las.Interfaces
         /// </summary>
         ulong[] NumPointRecordsByReturn { get; }
         #endregion
-        
+
+        #region ILasHeader Fields
         /// <summary>
         /// The absolute point count currently tracked by this LasHeader
         /// <para>NOTE: This is the 'true' count so you don't have to choose between legacy and modern count</para>
         /// </summary>
         ulong PointCount { get; }
+        #endregion
 
+        #region ILasHeader Methods
         /// <summary>
         /// Update the point count fields within the Public Header Block
         /// <para>NOTE: This will update both 'LegacyNumPointRecords' and 'NumPointRecords'</para>
         /// </summary>
         /// <param name="count"></param>
         void SetPointCount(ulong count);
+        /// <summary>
+        /// Update the 'LegacyNumPointRecords' field to the input value
+        /// <para>NOTE: This only updates the 'LegacyNumPointRecords' field</para>
+        /// </summary>
+        /// <param name="count">Count of points to be set</param>
+        void SetLegacyNumPointRecords(uint count);
+        /// <summary>
+        /// Set the 'FileSourceID' field to the input ushort value
+        /// </summary>
+        /// <param name="id">FileSourceID value to be used</param>
+        void SetFileSourceID(ushort id);
+        /// <summary>
+        /// Set the 'GlobalEncoding' bit flag to the input ushort value
+        /// <para>NOTE: This flag indicates timestamp convention and coordinate CRS, don't fuck it up</para>
+        /// </summary>
+        /// <param name="encoding">GlobalEncoding value to be used</param>
+        void SetGlobalEncoding(ushort encoding);
+        /// <summary>
+        /// Update the 'VersionMajor' and 'VersionMinor' flags to the input values
+        /// <para>NOTE: This will update the 'HeaderSize' field to match the specified version</para>
+        /// </summary>
+        /// <param name="major">The 'VersionMajor' value to be used - currently must be set to '1'</param>
+        /// <param name="minor">The 'VersionMinor' value to be used - currently only 2 & 4 are supported</param>
+        void SetVersion(byte major, byte minor);
         /// <summary>
         /// Set the 'SystemIdentifier' field to the input string
         /// <para>NOTE: Will enforce a 32-character limit - larger strings will be truncated</para>
@@ -209,6 +237,17 @@ namespace Euclid.Las.Interfaces
         /// <param name="generatingSoftware">char[] to be used for the 'GeneratingSoftware' field</param>
         void SetGeneratingSoftware(char[] generatingSoftware);
         /// <summary>
+        /// Set the 'CreationYear' and 'CreationDOY' fields to match the input DateTime object
+        /// </summary>
+        /// <param name="dt">DateTime object to be used</param>
+        void SetCreationDate(DateTime dt);
+        /// <summary>
+        /// Set the 'CreationYear' and 'CreationDOY' fields to the input year and day-of-year values
+        /// </summary>
+        /// <param name="year">Four-digit year</param>
+        /// <param name="doy">Integer day-of-year in range [1, 366]</param>
+        void SetCreationDate(ushort year, ushort doy);
+        /// <summary>
         /// Update the number of Variable Length Records stored after the Public Header Block
         /// <para>NOTE: Does not update 'Offset to Point Data'</para>
         /// </summary>
@@ -231,6 +270,20 @@ namespace Euclid.Las.Interfaces
         /// </summary>
         /// <param name="pos"></param>
         void CheckExtrema(IEnumerable<double> pos);
+        /// <summary>
+        /// Set the minima values to the input dimensional values
+        /// </summary>
+        /// <param name="minX">Minimum X-coordinate value</param>
+        /// <param name="minY">Minimum Y-coordinate value</param>
+        /// <param name="minZ">Minimum Z-coordinate value</param>
+        void SetMinima(double minX, double minY, double minZ);
+        /// <summary>
+        /// Set the maxima values to the input dimensional values
+        /// </summary>
+        /// <param name="maxX">Maximum X-coordinate value</param>
+        /// <param name="maxY">Maximum Y-coordinate value</param>
+        /// <param name="maxZ">Maximum Z-coordinate value</param>
+        void SetMaxima(double maxX, double maxY, double maxZ);
 
         /// <summary>
         /// Update the ILasHeader's 'Scale' fields to match the input ILasHeader's
@@ -256,5 +309,6 @@ namespace Euclid.Las.Interfaces
         /// <param name="y">OriginY value to be used</param>
         /// <param name="z">OriginZ value to be used</param>
         void SetOrigin(double x, double y, double z);
+        #endregion
     }
 }

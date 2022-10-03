@@ -14,18 +14,17 @@ namespace Euclid.Las.Builders
         #region ILasHeaderBuilder Methods
         public ILasHeaderBuilder SetVersion(byte major, byte minor)
         {
-            header.VersionMajor = major;
-            header.VersionMinor = minor;
+            header.SetVersion(major, minor);
             return this;
         }
         public ILasHeaderBuilder SetVersionMajor(byte versionMajor)
         {
-            header.VersionMajor = versionMajor;
+            header.SetVersion(versionMajor, header.VersionMinor);
             return this;
         }
         public ILasHeaderBuilder SetVersionMinor(byte versionMinor)
         {
-            header.VersionMinor = versionMinor;
+            header.SetVersion(header.VersionMajor, versionMinor);
             return this;
         }
 
@@ -37,9 +36,7 @@ namespace Euclid.Las.Builders
         }
         public ILasHeaderBuilder SetMinima(double minX, double minY, double minZ)
         {
-            header.MinX = minX;
-            header.MinY = minY;
-            header.MinZ = minZ;
+            header.SetMinima(minX, minY, minZ);
             return this;
         }
         public ILasHeaderBuilder SetMaxima(IEnumerable<double> maxima)
@@ -50,9 +47,7 @@ namespace Euclid.Las.Builders
         }
         public ILasHeaderBuilder SetMaxima(double maxX, double maxY, double maxZ)
         {
-            header.MaxX = maxX;
-            header.MaxY = maxY;
-            header.MaxZ = maxZ;
+            header.SetMaxima(maxX, maxY, maxZ);
             return this;
         }
         public ILasHeaderBuilder SetScale(IEnumerable<double> scale)
@@ -63,9 +58,7 @@ namespace Euclid.Las.Builders
         }
         public ILasHeaderBuilder SetScale(double scaleX, double scaleY, double scaleZ)
         {
-            header.ScaleX = scaleX;
-            header.ScaleY = scaleY;
-            header.ScaleZ = scaleZ;
+            header.SetScale(scaleX, scaleY, scaleZ);
             return this;
         }
         public ILasHeaderBuilder SetOrigin(IEnumerable<double> origin)
@@ -76,25 +69,18 @@ namespace Euclid.Las.Builders
         }
         public ILasHeaderBuilder SetOrigin(double originX, double originY, double originZ)
         {
-            header.OriginX = originX;
-            header.OriginY = originY;
-            header.OriginZ = originZ;
+            header.SetOrigin(originX, originY, originZ);
             return this;
         }
 
-        public ILasHeaderBuilder SetHeaderSize(ushort size)
-        {
-            header.HeaderSize = size;
-            return this;
-        }
         public ILasHeaderBuilder SetNumberOfVLRs(uint numberOfVLRs)
         {
-            header.NumberOfVLRs = numberOfVLRs;
+            header.SetNumVLRs(numberOfVLRs);
             return this;
         }
         public ILasHeaderBuilder SetOffsetToPointData(uint offset)
         {
-            header.OffsetToPointData = offset;
+            header.SetOffsetToPointData(offset);
             return this;
         }
 
@@ -111,18 +97,17 @@ namespace Euclid.Las.Builders
 
         public ILasHeaderBuilder SetCreationDate(ushort year, ushort doy)
         {
-            header.CreationYear = year;
-            header.CreationDOY = doy;
+            header.SetCreationDate(year, doy);
             return this;
         }
         public ILasHeaderBuilder SetCreationYear(ushort year)
         {
-            header.CreationYear = year;
+            header.SetCreationDate(year, header.CreationDOY);
             return this;
         }
         public ILasHeaderBuilder SetCreationDayOfYear(ushort dayOfYear)
         {
-            header.CreationDOY = dayOfYear;
+            header.SetCreationDate(header.CreationYear, dayOfYear);
             return this;
         }
         #endregion

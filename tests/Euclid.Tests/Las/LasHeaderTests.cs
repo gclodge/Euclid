@@ -1,4 +1,6 @@
-﻿using Bogus;
+﻿using System;
+
+using Bogus;
 using Xunit;
 using Assert = Xunit.Assert;
 
@@ -15,6 +17,47 @@ namespace Euclid.Tests.Las
 
         const byte MinFormat = 0;
         const byte MaxFormat = 10;
+
+        [Fact]
+        public void SetFileSourceIDTest()
+        {
+            ushort ExpectedValue = Faker.Random.UShort();
+
+            LasHeader Header = new();
+            Header.SetFileSourceID(ExpectedValue);
+
+            Assert.Equal(ExpectedValue, Header.FileSourceID);
+        }
+
+        [Fact]
+        public void SetGlobalEncodingTest()
+        {
+            ushort ExpectedValue = Faker.Random.UShort();
+
+            LasHeader Header = new();
+            Header.SetGlobalEncoding(ExpectedValue);
+
+            Assert.Equal(ExpectedValue, Header.GlobalEncoding);
+        }
+
+        [Fact]
+        public void SetVersionTest()
+        {
+            byte ExpectedMajor = 1;
+            byte ExpectedMinor = 2;
+
+            byte BadMajor = 2;
+            byte BadMinor = 3;
+
+            LasHeader Header = new();
+            Header.SetVersion(ExpectedMajor, ExpectedMinor);
+
+            Assert.Equal(ExpectedMajor, Header.VersionMajor);
+            Assert.Equal(ExpectedMinor, Header.VersionMinor);
+
+            Assert.Throws<NotImplementedException>(() => Header.SetVersion(BadMajor, ExpectedMinor));
+            Assert.Throws<NotImplementedException>(() => Header.SetVersion(ExpectedMajor, BadMinor));
+        }
 
         [Fact]
         public void CheckExtremaTest()
@@ -55,14 +98,46 @@ namespace Euclid.Tests.Las
             uint ExpectedLegacyPointCount = Faker.Random.UInt();
             ulong ExpectedNumPointRecords = 0;
 
-            LasHeader Header = new()
-            {
-                LegacyNumPointRecords = ExpectedLegacyPointCount
-            };
+            LasHeader Header = new();
+            Header.SetLegacyNumPointRecords(ExpectedLegacyPointCount);
 
             Assert.Equal(ExpectedLegacyPointCount, Header.PointCount);
             Assert.Equal(ExpectedLegacyPointCount, Header.LegacyNumPointRecords);
             Assert.Equal(ExpectedNumPointRecords, Header.NumPointRecords);
+        }
+
+        [Fact]
+        public void SetSystemIdentifierTest()
+        {
+            int Length = 32;
+            string ExpectedString = Faker.Random.String(Length);
+            char[] ExpectedValue = ExpectedString.ToCharArray();
+
+            var HeaderA = new LasHeader();
+            HeaderA.SetSystemIdentifier(ExpectedString);
+
+            var HeaderB = new LasHeader();
+            HeaderB.SetSystemIdentifier(ExpectedValue);
+
+            Assert.Equal(ExpectedValue, HeaderA.SystemIdentifier);
+            Assert.Equal(ExpectedValue, HeaderB.SystemIdentifier);
+        }
+
+        [Fact]
+        public void SetGeneratingSoftwareTest()
+        {
+            int Length = 32;
+            string ExpectedString = Faker.Random.String(Length);
+            char[] ExpectedValue = ExpectedString.ToCharArray();
+
+            var HeaderA = new LasHeader();
+            HeaderA.SetGeneratingSoftware(ExpectedString);
+
+            var HeaderB = new LasHeader();
+            HeaderB.SetGeneratingSoftware(ExpectedValue);
+
+            Assert.Equal(ExpectedValue, HeaderA.GeneratingSoftware);
+            Assert.Equal(ExpectedValue, HeaderB.GeneratingSoftware);
         }
 
         [Fact]
@@ -101,7 +176,7 @@ namespace Euclid.Tests.Las
         }
 
         [Fact]
-        public void UpdateScaleTest()
+        public void SetScaleTest()
         {
             double ExpectedX = Faker.Random.Double();
             double ExpectedY = Faker.Random.Double();
@@ -123,7 +198,7 @@ namespace Euclid.Tests.Las
         }
 
         [Fact]
-        public void UpdateOriginTest()
+        public void SetOriginTest()
         {
             double ExpectedX = Faker.Random.Double();
             double ExpectedY = Faker.Random.Double();
@@ -142,6 +217,56 @@ namespace Euclid.Tests.Las
             Assert.Equal(ExpectedX, HeaderB.OriginX);
             Assert.Equal(ExpectedY, HeaderB.OriginY);
             Assert.Equal(ExpectedZ, HeaderB.OriginZ);
+        }
+
+        [Fact]
+        public void SetCreationDateTest()
+        {
+            //< February 11th, 2022 - the 42nd day of the year
+            DateTime ExpectedDate = new DateTime(2022, 02, 11);
+            ushort ExpectedYear = (ushort)ExpectedDate.Year;
+            ushort ExpectedDOY = (ushort)ExpectedDate.DayOfYear;
+
+            LasHeader HeaderA = new();
+            HeaderA.SetCreationDate(ExpectedDate);
+
+            LasHeader HeaderB = new();
+            HeaderB.SetCreationDate(ExpectedYear, ExpectedDOY);
+
+            Assert.Equal(ExpectedYear, HeaderA.CreationYear);
+            Assert.Equal(ExpectedDOY, HeaderA.CreationDOY);
+            Assert.Equal(ExpectedYear, HeaderB.CreationYear);
+            Assert.Equal(ExpectedDOY, HeaderB.CreationDOY);
+        }
+
+        [Fact]
+        public void SetMinimaTest()
+        {
+            double ExpectedX = Faker.Random.Double();
+            double ExpectedY = Faker.Random.Double();
+            double ExpectedZ = Faker.Random.Double();
+
+            LasHeader Header = new();
+            Header.SetMinima(ExpectedX, ExpectedY, ExpectedZ);
+
+            Assert.Equal(ExpectedX, Header.MinX);
+            Assert.Equal(ExpectedY, Header.MinY);
+            Assert.Equal(ExpectedZ, Header.MinZ);
+        }
+
+        [Fact]
+        public void SetMaximaTest()
+        {
+            double ExpectedX = Faker.Random.Double();
+            double ExpectedY = Faker.Random.Double();
+            double ExpectedZ = Faker.Random.Double();
+
+            LasHeader Header = new();
+            Header.SetMaxima(ExpectedX, ExpectedY, ExpectedZ);
+
+            Assert.Equal(ExpectedX, Header.MaxX);
+            Assert.Equal(ExpectedY, Header.MaxY);
+            Assert.Equal(ExpectedZ, Header.MaxZ);
         }
     }
 }

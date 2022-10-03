@@ -29,7 +29,7 @@ namespace Euclid.Las.Stream
         public bool EOF => PointsReturned >= Header.PointCount;
 
         public ILasHeader Header { get; private set; } = null;
-        public IList<LasVariableLengthRecord> VLRs { get; private set; } = null;
+        public IList<LasVariableLengthRecord> VLRs { get; private set; } = new List<LasVariableLengthRecord>();
         #endregion
 
         #region Internal Fields / Streams
@@ -125,6 +125,8 @@ namespace Euclid.Las.Stream
 
         void ReadVariableLengthRecords()
         {
+            if (Header.NumberOfVLRs == 0) return;
+
             VLRs = Enumerable.Range(0, (int)Header.NumberOfVLRs)
                              .Select(_ => LasVariableLengthRecord.ReadFromStream(_BinaryReader))
                              .ToList();

@@ -10,62 +10,65 @@ namespace Euclid.Las
     public class LasHeader : ILasHeader
     {
         /// <summary>
+        /// Maximum allowable length (in bytes) of the 'SystemIdentifier' and 'GeneratingSoftware' fields
+        /// </summary>
+        public const int IdentifierLength = 32;
+
+        /// <summary>
         /// The currently supported 'VersionMinor' flags - assuming a 'VersionMajor' of 1
         /// </summary>
         public static readonly HashSet<int> SupportedVersionMinors = new() { 2, 4 };
 
-        public const int IdentifierLength = 32;
-
         #region ILasHeader Fields & Properties
         public uint FileSignature { get; private set; } = Constants.LasHeaderSignature;
 
-        public ushort FileSourceID { get; set; } = 0;
-        public ushort GlobalEncoding { get; set; } = LasHelper.GetGlobalEncoding();
+        public ushort FileSourceID { get; private set; } = 0;
+        public ushort GlobalEncoding { get; private set; } = LasHelper.GetGlobalEncoding();
 
         public uint Guid1 { get; set; } = 0;
         public ushort Guid2 { get; set; } = 0;
         public ushort Guid3 { get; set; } = 0;
         public char[] Guid4 { get; set; } = new char[8];
 
-        public byte VersionMajor { get; set; } = 1;
-        public byte VersionMinor { get; set; } = 2;
+        public byte VersionMajor { get; private set; } = 1;
+        public byte VersionMinor { get; private set; } = 2;
 
-        public char[] SystemIdentifier { get; set; } = new char[IdentifierLength];
-        public char[] GeneratingSoftware { get; set; } = new char[IdentifierLength];
+        public char[] SystemIdentifier { get; private set; } = new char[IdentifierLength];
+        public char[] GeneratingSoftware { get; private set; } = new char[IdentifierLength];
 
-        public ushort CreationYear { get; set; } = (ushort)DateTime.Now.Year;
-        public ushort CreationDOY { get; set; } = (ushort)DateTime.Now.DayOfYear;
-        public ushort HeaderSize { get; set; } = Constants.LasHeader12Size;
+        public ushort CreationYear { get; private set; } = (ushort)DateTime.Now.Year;
+        public ushort CreationDOY { get; private set; } = (ushort)DateTime.Now.DayOfYear;
+        public ushort HeaderSize { get; private set; } = Constants.LasHeader12Size;
 
-        public uint OffsetToPointData { get; set; } = Constants.LasHeader12Size;
-        public uint NumberOfVLRs { get; set; } = 0;
+        public uint OffsetToPointData { get; private set; } = Constants.LasHeader12Size;
+        public uint NumberOfVLRs { get; private set; } = 0;
 
         public byte PointDataFormat { get; private set; } = 0;
         public ushort PointDataRecordLength { get; private set; } = PointTypeMap.GetPointRecordLength(0);
 
-        public uint LegacyNumPointRecords { get; set; } = 0;
+        public uint LegacyNumPointRecords { get; private set; } = 0;
         public uint[] LegacyNumPointRecordsByReturn { get; set; } = new uint[5];
 
-        public double ScaleX { get; set; } = Constants.DefaultScale;
-        public double ScaleY { get; set; } = Constants.DefaultScale;
-        public double ScaleZ { get; set; } = Constants.DefaultScale;
+        public double ScaleX { get; private set; } = Constants.DefaultScale;
+        public double ScaleY { get; private set; } = Constants.DefaultScale;
+        public double ScaleZ { get; private set; } = Constants.DefaultScale;
 
-        public double OriginX { get; set; } = Constants.DefaultOffset;
-        public double OriginY { get; set; } = Constants.DefaultOffset;
-        public double OriginZ { get; set; } = Constants.DefaultOffset;
+        public double OriginX { get; private set; } = Constants.DefaultOffset;
+        public double OriginY { get; private set; } = Constants.DefaultOffset;
+        public double OriginZ { get; private set; } = Constants.DefaultOffset;
 
-        public double MaxX { get; set; } = double.MinValue;
-        public double MinX { get; set; } = double.MaxValue;
-        public double MaxY { get; set; } = double.MinValue;
-        public double MinY { get; set; } = double.MaxValue;
-        public double MaxZ { get; set; } = double.MinValue;
-        public double MinZ { get; set; } = double.MaxValue;
+        public double MaxX { get; private set; } = double.MinValue;
+        public double MinX { get; private set; } = double.MaxValue;
+        public double MaxY { get; private set; } = double.MinValue;
+        public double MinY { get; private set; } = double.MaxValue;
+        public double MaxZ { get; private set; } = double.MinValue;
+        public double MinZ { get; private set; } = double.MaxValue;
 
-        public ulong StartOfWaveformDataPacketRecord { get; set; } = 0;
-        public ulong StartOfFirstExtendedVLR { get; set; } = 0;
-        public uint NumExtendedVLRs { get; set; } = 0;
+        public ulong StartOfWaveformDataPacketRecord { get; private set; } = 0;
+        public ulong StartOfFirstExtendedVLR { get; private set; } = 0;
+        public uint NumExtendedVLRs { get; private set; } = 0;
         public ulong NumPointRecords { get; private set; } = 0;
-        public ulong[] NumPointRecordsByReturn { get; set; } = new ulong[15];
+        public ulong[] NumPointRecordsByReturn { get; private set; } = new ulong[15];
 
         public ulong PointCount => NumPointRecords < LegacyNumPointRecords ? LegacyNumPointRecords : NumPointRecords;
         #endregion
@@ -75,6 +78,11 @@ namespace Euclid.Las
         {
             LegacyNumPointRecords = (uint)count;
             NumPointRecords = count;
+        }
+
+        public void SetLegacyNumPointRecords(uint count)
+        {
+            LegacyNumPointRecords = count;
         }
 
         public void SetSystemIdentifier(string systemIdentifier)
@@ -169,6 +177,48 @@ namespace Euclid.Las
             OriginY = y;
             OriginZ = z;
         }
+
+        public void SetFileSourceID(ushort id)
+        {
+            FileSourceID = id;
+        }
+
+        public void SetGlobalEncoding(ushort encoding)
+        {
+            GlobalEncoding = encoding;
+        }
+
+        public void SetVersion(byte major, byte minor)
+        {
+            if (major != 1) throw new NotImplementedException($"Euclid only supports 'VersionMajor' of {1}");
+            if (!SupportedVersionMinors.Contains(minor)) throw new NotImplementedException($"Euclid does not support a 'VersionMinor' of {minor} - only {string.Join(", ", SupportedVersionMinors)}");
+        }
+
+        public void SetCreationDate(DateTime dt)
+        {
+            CreationYear = (ushort)dt.Year;
+            CreationDOY = (ushort)dt.DayOfYear;
+        }
+
+        public void SetCreationDate(ushort year, ushort doy)
+        {
+            CreationYear = year;
+            CreationDOY = doy;
+        }
+
+        public void SetMinima(double minX, double minY, double minZ)
+        {
+            MinX = minX;
+            MinY = minY;
+            MinZ = minZ;
+        }
+
+        public void SetMaxima(double maxX, double maxY, double maxZ)
+        {
+            MaxX = maxX;
+            MaxY = maxY;
+            MaxZ = maxZ;
+        }
         #endregion
 
         #region Static Helper Methods
@@ -184,7 +234,7 @@ namespace Euclid.Las
         {
             var header = new LasHeader();
 
-            #region LAS 1.2 Parsing
+            //< Parse all original LAS 1.2 fields
             header.FileSignature = reader.ReadUInt32();
             if (header.FileSignature != Constants.LasHeaderSignature) throw new Exception($"Invalid 'FileSignature' encountered: {header.FileSignature} - should only ever be {Constants.LasHeaderSignature}");
 
@@ -198,7 +248,7 @@ namespace Euclid.Las
             header.VersionMinor = reader.ReadByte();
 
             if (header.VersionMajor != 1) throw new Exception($"Unknown 'VersionMajor' encountered: {header.VersionMajor}");
-            if (!SupportedVersionMinors.Contains(header.VersionMinor)) throw new Exception($"Unsupported 'VersionMinor' encountered: {header.VersionMinor} - currently we support only LAS1.2 & 1.4");
+            if (!SupportedVersionMinors.Contains(header.VersionMinor)) throw new NotImplementedException($"Euclid does not support a 'VersionMinor' of {header.VersionMinor} - only {string.Join(", ", SupportedVersionMinors)}");
 
             header.SystemIdentifier = reader.ReadChars(32);
             header.GeneratingSoftware = reader.ReadChars(32);
@@ -226,7 +276,6 @@ namespace Euclid.Las
             header.MinY = reader.ReadDouble();
             header.MaxZ = reader.ReadDouble();
             header.MinZ = reader.ReadDouble();
-            #endregion
 
             //< If we're just LAS 1.2 - we can return the header now
             if (header.VersionMinor == 2) return header;

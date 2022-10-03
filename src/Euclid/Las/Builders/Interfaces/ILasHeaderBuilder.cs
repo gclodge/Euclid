@@ -25,7 +25,6 @@ namespace Euclid.Las.Builders.Interfaces
 
         ILasHeaderBuilder SetPointDataFormat(byte format);
 
-        ILasHeaderBuilder SetHeaderSize(ushort size);
         ILasHeaderBuilder SetOffsetToPointData(uint offset);
         ILasHeaderBuilder SetNumberOfVLRs(uint numberOfVLRs);
 
