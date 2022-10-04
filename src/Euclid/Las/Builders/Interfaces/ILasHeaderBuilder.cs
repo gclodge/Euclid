@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Euclid.Las.Headers.Interfaces;
+using Euclid.Las.Interfaces;
 
 namespace Euclid.Las.Builders.Interfaces
 {
@@ -23,11 +23,8 @@ namespace Euclid.Las.Builders.Interfaces
         ILasHeaderBuilder SetMaxima(IEnumerable<double> maxima);
         ILasHeaderBuilder SetMaxima(double maxX, double maxY, double maxZ);
 
-        ILasHeaderBuilder SetPointDataRecordLength(ushort length);
         ILasHeaderBuilder SetPointDataFormat(byte format);
-        ILasHeaderBuilder SetPointType(Type T);
 
-        ILasHeaderBuilder SetHeaderSize(ushort size);
         ILasHeaderBuilder SetOffsetToPointData(uint offset);
         ILasHeaderBuilder SetNumberOfVLRs(uint numberOfVLRs);
 

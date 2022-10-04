@@ -1,7 +1,6 @@
 ﻿using System;
 
-using Euclid.Las.Points;
-using Euclid.Las.Headers.Interfaces;
+using Euclid.Las.Interfaces;
 
 namespace Euclid.Las.Stream.Interfaces
 {

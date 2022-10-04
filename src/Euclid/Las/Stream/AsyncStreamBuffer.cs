@@ -1,8 +1,6 @@
 ﻿using System;
 
-using Euclid.Las.Points;
-using Euclid.Las.Points.Interfaces;
-using Euclid.Las.Headers.Interfaces;
+using Euclid.Las.Interfaces;
 using Euclid.Las.Stream.Interfaces;
 
 namespace Euclid.Las.Stream
@@ -33,18 +31,18 @@ namespace Euclid.Las.Stream
 
         public LasPoint GetNext(ILasHeader header)
         {
-            LasPoint lpt = new LasPoint();
+            LasPoint lpt = new();
             GetNext(header, ref lpt);
             return lpt;
         }
 
         public void GetNext(ILasHeader header, ref LasPoint lpt)
         {
-            var p = Data.GetValue(Consumed);
+            var p = (ILasPointStruct)Data.GetValue(Consumed);
             Consumed++;
 
             //< Update with all the required/usual fields
-            lpt.Update((ILasPointStruct)p, header);
+            lpt.Update(p, header);
 
             //< Check and update as necessary for timestamped / RGB / 4band point data
             if (p is ILasTime)

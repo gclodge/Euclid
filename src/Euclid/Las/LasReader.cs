@@ -1,7 +1,5 @@
 ﻿using System;
 
-using Euclid.Las.Points;
-using Euclid.Las.Headers.Interfaces;
 using Euclid.Las.Interfaces;
 using Euclid.Las.Stream;
 using Euclid.Las.Stream.Interfaces;
@@ -18,6 +16,11 @@ namespace Euclid.Las
 
         private bool _Disposing;
         private bool _Disposed;
+
+        public LasReader(IStreamHandler stream)
+        {
+            _Stream = stream;
+        }
 
         public LasReader(string lasFilePath, uint pointsToBuffer = Constants.DefaultReaderBufferCount)
         {

@@ -1,8 +1,5 @@
 ﻿using System;
 
-using Euclid.Las.Points;
-using Euclid.Las.Headers.Interfaces;
-
 namespace Euclid.Las.Interfaces
 {
     public interface ILasReader : IDisposable

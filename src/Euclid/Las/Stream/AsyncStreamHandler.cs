@@ -5,15 +5,12 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-using Euclid.Las.Points;
-using Euclid.Las.Headers;
-using Euclid.Las.Headers.Structs;
-using Euclid.Las.Headers.Interfaces;
+using Euclid.Las.Interfaces;
 using Euclid.Las.Stream.Interfaces;
 
 namespace Euclid.Las.Stream
 {
-    internal class AsyncStreamHandler : IStreamHandler, IDisposable
+    public class AsyncStreamHandler : IStreamHandler, IDisposable
     {
         #region Public Fields
         public ulong ReadTicks { get; private set; } = 0;
@@ -32,7 +29,7 @@ namespace Euclid.Las.Stream
         public bool EOF => PointsReturned >= Header.PointCount;
 
         public ILasHeader Header { get; private set; } = null;
-        public IList<LasVariableLengthRecord> VLRs { get; private set; } = null;
+        public IList<LasVariableLengthRecord> VLRs { get; private set; } = new List<LasVariableLengthRecord>();
         #endregion
 
         #region Internal Fields / Streams
@@ -40,8 +37,8 @@ namespace Euclid.Las.Stream
         private readonly BinaryReader _BinaryReader;
 
         private Thread _ReaderThread;
-        private readonly AutoResetEvent _NeedDataEvent = new AutoResetEvent(false);
-        private readonly AutoResetEvent _DataReadyEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent _NeedDataEvent = new(false);
+        private readonly AutoResetEvent _DataReadyEvent = new(false);
 
         private IStreamBuffer _A;
         private IStreamBuffer _B;
@@ -64,9 +61,12 @@ namespace Euclid.Las.Stream
         #region Fluent Interface
         public IStreamHandler Initialize()
         {
+            //< Ensure the reader stream is set to the start
+            _BinaryReader.BaseStream.Seek(0, SeekOrigin.Begin);
+
             //< Parse the incoming ILasHeader and get the buffer size
-            ReadLasHeader();
-            
+            Header = LasHeader.ReadFromStream(_BinaryReader);
+
             BufferSize = BufferCount * Header.PointDataRecordLength;
             PointType = PointTypeMap.GetPointRecordType(Header);
             _Buffer = new byte[BufferSize];
@@ -122,19 +122,11 @@ namespace Euclid.Las.Stream
         #endregion
 
         #region Internal Methods
-        void ReadLasHeader()
-        {
-            Header = ReadOfType<LasHeader>();
-
-            if (Header.VersionMajor == 4 && Header.VersionMinor == 1)
-            {
-                Seek(0);
-                Header = ReadOfType<LasHeader14>();
-            }
-        }
 
         void ReadVariableLengthRecords()
         {
+            if (Header.NumberOfVLRs == 0) return;
+
             VLRs = Enumerable.Range(0, (int)Header.NumberOfVLRs)
                              .Select(_ => LasVariableLengthRecord.ReadFromStream(_BinaryReader))
                              .ToList();
@@ -163,6 +155,7 @@ namespace Euclid.Las.Stream
         void SetActive(IStreamBuffer buff)
         {
             _Active = buff;
+            PointsYielded += (ulong)_Active.Loaded;
         }
 
         void ReadPointsAsync()
@@ -172,36 +165,27 @@ namespace Euclid.Las.Stream
                 long startTicks = DateTime.Now.Ticks;
                 _NeedDataEvent.WaitOne();
 
+                //< Check if A or B have points available - set to active if they do
                 if (_A.Available > 0)
                 {
                     SetActive(_A);
-                    PointsYielded += (ulong)_Active.Loaded;
-                    _DataReadyEvent.Set();
                 }
                 else if (_B.Available > 0)
                 {
                     SetActive(_B);
-                    PointsYielded += (ulong)_Active.Loaded;
-                    _DataReadyEvent.Set();
                 }
-                else //< Neither AsyncStreamBuffer has points ready
+                //< Neither AsyncStreamBuffer has points ready - use A, but also fill B
+                else
                 {
                     MarshalPoints(_A);
                     SetActive(_A);
-                    PointsYielded += (ulong)_Active.Loaded;
+                    MarshalPoints(_B);
+                }
+                _DataReadyEvent.Set();
 
-                    _DataReadyEvent.Set();
-                    MarshalPoints(_B);
-                }
-                
-                if (_A.Available == 0 && _Active != _A)
-                {
-                    MarshalPoints(_A);
-                }
-                if (_B.Available == 0 && _Active != _B)
-                {
-                    MarshalPoints(_B);
-                }
+                //< There must be a cleaner way of doing this - can we wrap these up in an IEnumerable or something?
+                if (_A.Available == 0 && _Active != _A) MarshalPoints(_A);
+                if (_B.Available == 0 && _Active != _B) MarshalPoints(_B);
 
                 ReadTicks += (ulong)(DateTime.Now.Ticks - startTicks);
             }
@@ -209,21 +193,25 @@ namespace Euclid.Las.Stream
 
         void MarshalPoints(IStreamBuffer buff)
         {
-            if (BytesRemaining > 0)
-            {
-                long remainingRecs = (long)(Header.PointCount - PointsRead);
-                long toRead = Math.Min(Math.Min(BytesRemaining, BufferSize), remainingRecs * (long)Header.PointDataRecordLength);
+            if (BytesRemaining <= 0) return;
 
-                _BinaryReader.Read(_Buffer, 0, (int)toRead);
-                ulong numRead = (ulong)(toRead / Header.PointDataRecordLength);
-                var ph = GCHandle.Alloc(buff.Data, GCHandleType.Pinned);
-                Marshal.Copy(_Buffer, 0, ph.AddrOfPinnedObject(), (int)toRead);
-                ph.Free();
+            //< Get number of point records remaining to be read, convert to number of bytes
+            long remainingRecs = (long)(Header.PointCount - PointsRead);
+            long toRead = Math.Min(Math.Min(BytesRemaining, BufferSize), remainingRecs * (long)Header.PointDataRecordLength);
 
-                buff.SetLoaded((int)numRead);
-                buff.SetConsumed(0);
-                PointsRead += numRead;
-            }
+            //< Read the bytes into the internal buffer
+            _BinaryReader.Read(_Buffer, 0, (int)toRead);
+            ulong numRead = (ulong)(toRead / Header.PointDataRecordLength);
+            //< Get the memory address for the data array in the input IStreamBuffer
+            var ph = GCHandle.Alloc(buff.Data, GCHandleType.Pinned);
+            //< Copy directly to that address from internal buffer
+            Marshal.Copy(_Buffer, 0, ph.AddrOfPinnedObject(), (int)toRead);
+            ph.Free();
+
+            //< Update tracking of both AsyncStreamHandler and IStreamBuffer
+            buff.SetLoaded((int)numRead);
+            buff.SetConsumed(0);
+            PointsRead += numRead;
         }
         #endregion
 
@@ -235,7 +223,6 @@ namespace Euclid.Las.Stream
             {
                 if (_Disposing)
                 {
-                    _NeedDataEvent.Set();
                     _ReaderThread.Join();
                     if (_StreamReader != null)
                     {
