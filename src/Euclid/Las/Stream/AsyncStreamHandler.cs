@@ -156,7 +156,6 @@ namespace Euclid.Las.Stream
         {
             _Active = buff;
             PointsYielded += (ulong)_Active.Loaded;
-            _DataReadyEvent.Set();
         }
 
         void ReadPointsAsync()
@@ -167,8 +166,14 @@ namespace Euclid.Las.Stream
                 _NeedDataEvent.WaitOne();
 
                 //< Check if A or B have points available - set to active if they do
-                if (_A.Available > 0) SetActive(_A);
-                else if (_B.Available > 0) SetActive(_B);
+                if (_A.Available > 0)
+                {
+                    SetActive(_A);
+                }
+                else if (_B.Available > 0)
+                {
+                    SetActive(_B);
+                }
                 //< Neither AsyncStreamBuffer has points ready - use A, but also fill B
                 else
                 {
@@ -176,7 +181,8 @@ namespace Euclid.Las.Stream
                     SetActive(_A);
                     MarshalPoints(_B);
                 }
-                
+                _DataReadyEvent.Set();
+
                 //< There must be a cleaner way of doing this - can we wrap these up in an IEnumerable or something?
                 if (_A.Available == 0 && _Active != _A) MarshalPoints(_A);
                 if (_B.Available == 0 && _Active != _B) MarshalPoints(_B);
@@ -217,7 +223,6 @@ namespace Euclid.Las.Stream
             {
                 if (_Disposing)
                 {
-                    _NeedDataEvent.Set();
                     _ReaderThread.Join();
                     if (_StreamReader != null)
                     {

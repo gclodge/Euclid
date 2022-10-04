@@ -38,11 +38,11 @@ namespace Euclid.Las.Stream
 
         public void GetNext(ILasHeader header, ref LasPoint lpt)
         {
-            var p = Data.GetValue(Consumed);
+            var p = (ILasPointStruct)Data.GetValue(Consumed);
             Consumed++;
 
             //< Update with all the required/usual fields
-            lpt.Update((ILasPointStruct)p, header);
+            lpt.Update(p, header);
 
             //< Check and update as necessary for timestamped / RGB / 4band point data
             if (p is ILasTime)
