@@ -9,10 +9,15 @@ The library currently contains the following namespaces:
 - [Euclid.Time](#euclidtime)
     - Time contains helper methods for doing timestamp handling that is common to LAS files (such as second-of-week conversion, UTC to GPS, etc)
 
-# Euclid.Las
-
-// TODO
-
-# Euclid.Time
-
-// TODO
+# Roadmap
+## Euclid
+- Finish LasHeaderBuilder
+## Euclid.Tests
+- Generate fixture dataset of **small** LAS files of known type & point record format
+- Add test coverage of LasReader for all above-added test files
+- Add test coverage of LasWriter to ensure format adherence
+## Euclid.Cli
+- Add argument parsing & mode selection
+- Add simple 'boundary' mode to find and output LAS bounding boxes in GeoJSON 
+## Euclid.Cli.Tests
+- Actually make it, essentially integration tests but also validate argument parsing
